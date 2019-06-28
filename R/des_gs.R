@@ -96,7 +96,7 @@
 #' des_3   <- des_gs(J = 3)
 #' # With triangular-test boundaries
 #' des_tri <- des_gs(shape = "triangular")
-#' @seealso \code{\link{an}}, \code{\link{build}}, \code{\link{des_nearopt}},
+#' @seealso \code{\link[OptGS]{an}}, \code{\link{build}}, \code{\link{des_nearopt}},
 #' \code{\link{des_opt}}, \code{\link{opchar}}, \code{\link{sim}},
 #' \code{\link{plot.OptGS_des}}, \code{\link{plot.OptGS_opchar}},
 #' \code{\link{print.OptGS_des}}, \code{\link{summary.OptGS_des}}.

@@ -13,9 +13,13 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r, echo = F, eval = F}
+```{r, echo = F}
 suppressPackageStartupMessages(library(OptGS))
 ```
+
+# OptGS
+
+*Optimal and near-optimal group-sequential designs for clinical trials with continuous outcomes*
 
 `r badger::badge_cran_release("OptGS", "green")`
 `r badger::badge_cran_download("OptGS", "grand-total")`
@@ -24,10 +28,6 @@ suppressPackageStartupMessages(library(OptGS))
 `r badger::badge_devel("mjg211/OptGS", "blue")`
 `r badger::badge_code_size("mjg211/OptGS")`
 `r badger::badge_custom("contributions", "welcome", "blue")`
-
-# OptGS
-
-*Optimal and near-optimal group-sequential designs for clinical trials with continuous outcomes*
 
 ## Introduction
 
@@ -73,19 +73,20 @@ des <- des_nearopt()
 
 We can then plot the stopping boundaries of this design with:
 
-```{r, eval = F}
+```{r}
 plot(des)
 ```
 
 The operating characteristics of the design can also be determined with:
 
-```{r, eval = F}
-opchar <- opchar(des)
+```{r}
+opchar <- opchar(des, tau = seq(-des$delta, 2*des$delta,
+                                length.out = 100))
 ```
 
 Finally, we can then plot the expected sample size and power curves for this design using:
 
-```{r, eval = F}
+```{r}
 plot(opchar)
 ```
 
