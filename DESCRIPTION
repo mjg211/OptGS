@@ -1,0 +1,39 @@
+Package: OptGS
+Type: Package
+Title: Optimal and near-optimal group-sequential designs for clinical trials
+    with continuous outcomes
+Version: 2.0.0
+Date: 2019-06-26
+Authors@R: c(utils::person("James", "Wason",
+                           email   = "james.wason@newcastle.ac.uk",
+                           role    = c("aut", "cre"),
+                           comment = c(ORCID = "0000-0002-4691-126X")),
+             utils::person("Michael", "Grayling",
+                           email   = "michael.grayling@newcastle.ac.uk",
+                           role    = "ctb",
+                           comment = c(ORCID = "0000-0002-0680-6668")))
+Description: OptGS provides a suite of functions to assist with the design,
+    analysis, and visualization of randomized two-arm group-sequential clinical
+    trials with continuous outcome variables. Specifically, support is provided
+    to perform sample size calculations for each of the most popular applicable
+    (non-optimal) designs, along with optimal and near-optimal designs.
+    Additional functions allow point estimates, p-values, and confidence
+    intervals to be determined for possible results in these designs. Plotting
+    functions also permit the informative depiction of several important
+    quantities.
+License: MIT + file LICENSE
+URL: https://github.com/mjg211/OptGS
+BugReports: https://github.com/mjg211/OptGS/issues
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 6.1.1
+Depends: R (>= 3.5.1)
+Imports: GA,
+    ggplot2 (>= 3.1.0),
+    iterpc,
+    mvtnorm,
+    tibble
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
