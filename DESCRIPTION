@@ -27,12 +27,16 @@ BugReports: https://github.com/mjg211/OptGS/issues
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.1.1
-Depends: R (>= 3.5.1)
-Imports: GA,
+Depends: R (>= 3.5.0)
+Imports: dplyr,
+    GA,
     ggplot2 (>= 3.1.0),
+    ggthemes,
     iterpc,
     mvtnorm,
-    tibble
+    scales,
+    tibble,
+    tidyr
 Suggests: 
     knitr,
     rmarkdown

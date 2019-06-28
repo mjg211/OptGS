@@ -181,18 +181,18 @@ des_nearopt <- function(J = 2, alpha = 0.05, beta = 0.2, delta = 0.2,
   }
   e_fac      <- b_fac^(Delta[1] - 0.5)
   f_fac      <- b_fac^(Delta[2] - 0.5)
-  C          <- optim(par        = c(0.5, 0.5),
-                      fn         = eval_C_pf,
-                      J          = J,
-                      alpha      = alpha,
-                      beta       = beta,
-                      delta      = delta,
-                      CovZ       = CovZ,
-                      e_fac      = e_fac,
-                      f_fac      = f_fac,
-                      sqrt_I_fac = sqrt_I_fac,
-                      seq_j      = seq_j,
-                      seq_jm1    = seq_jm1)$par
+  C          <- stats::optim(par        = c(0.5, 0.5),
+                             fn         = eval_C_pf,
+                             J          = J,
+                             alpha      = alpha,
+                             beta       = beta,
+                             delta      = delta,
+                             CovZ       = CovZ,
+                             e_fac      = e_fac,
+                             f_fac      = f_fac,
+                             sqrt_I_fac = sqrt_I_fac,
+                             seq_j      = seq_j,
+                             seq_jm1    = seq_jm1)$par
   I          <- (seq_J/J)*(sum(C)/delta)^2
   e          <- C[2]*(seq_J/J)^(Delta[1] - 0.5)
   f          <- delta*sqrt(I) - C[1]*(seq_J/J)^(Delta[2] - 0.5)

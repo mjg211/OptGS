@@ -205,7 +205,7 @@ theme_OptGS             <- function(base_size = 11, base_family = "") {
                    legend.position  = "bottom",
                    plot.margin      = ggplot2::unit(c(0.3, 0.5, 0.3, 0.3),
                                                     "cm"),
-                   plot.title = element_text(hjust = 0.5),
+                   plot.title = ggplot2::element_text(hjust = 0.5),
                    complete         = T)
 }
 

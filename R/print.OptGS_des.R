@@ -38,7 +38,7 @@ print.OptGS_des <- function(x, ...) {
   message("  Futility boundaries: f = (", paste0(round(x$f, 3),
                                                  collapse = ", "), ")")
   message("")
-  len <- length(strsplit(as.character(test$delta), split = "")[[1]])
+  len <- length(strsplit(as.character(x$delta), split = "")[[1]])
   message("  ESS(0)", rep(" ", max(11, len)), "= ",
           round(x$opchar$`ESS(tau)`[1], 2))
   message("  ESS(", x$delta, ")", rep(" ", max(1*(len >= 12), 12 - len)),  "= ",

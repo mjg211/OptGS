@@ -4,9 +4,9 @@
 #' \code{summary.OptGS_des()} summarises the key details from a group-sequential
 #' clinical trial design object for a normally distributed primary outcome.
 #'
-#' @param x An object of class OptGS_des, as returned by \code{\link{des_gs}},
-#' \code{\link{des_nearopt}}, \code{\link{des_opt}}, or \code{\link{build}}.
-#' Defaults to \code{des_gs()}.
+#' @param object An object of class OptGS_des, as returned by
+#' \code{\link{des_gs}}, \code{\link{des_nearopt}}, \code{\link{des_opt}}, or
+#' \code{\link{build}}. Defaults to \code{des_gs()}.
 #' @param ... For compatability with the generic.
 #' @examples
 #' # A two-stage design
@@ -18,11 +18,12 @@
 #' \code{\link{plot.OptGS_des}}, \code{\link{plot.OptGS_opchar}},
 #' \code{\link{opchar}}, \code{\link{summary.OptGS_des}}.
 #' @export
-summary.OptGS_des <- function(x, ...) {
+summary.OptGS_des <- function(object, ...) {
 
   ##### Check input variables ##################################################
 
-  #check_OptGS_des(x, "x")
+  #check_OptGS_des(object, "object")
+  x <- object
 
   ##### Print summary ##########################################################
 
@@ -38,7 +39,7 @@ summary.OptGS_des <- function(x, ...) {
   message("  Futility boundaries: f = (", paste0(round(x$f, 3),
                                                  collapse = ", "), ")")
   message("")
-  len <- length(strsplit(as.character(test$delta), split = "")[[1]])
+  len <- length(strsplit(as.character(x$delta), split = "")[[1]])
   message("  ESS(0)", rep(" ", max(11, len)), "= ",
           round(x$opchar$`ESS(tau)`[1], 2))
   message("  ESS(", x$delta, ")", rep(" ", max(1*(len >= 12), 12 - len)),  "= ",

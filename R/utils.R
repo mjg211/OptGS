@@ -121,19 +121,19 @@ eval_Delta_pf <- function(Delta, J, alpha, beta, delta, sigma0, sigma1, ratio,
                           w, CovZ, b_fac, sqrt_I_fac, n_fac, seq_j, seq_jm1) {
   e_fac    <- b_fac^(Delta[1] - 0.5)
   f_fac    <- b_fac^(Delta[2] - 0.5)
-  C        <- optim(par        = c(0.5, 0.5),
-                    fn         = eval_C_pf,
-                    control    = list(abstol = 1e-7),
-                    J          = J,
-                    alpha      = alpha,
-                    beta       = beta,
-                    delta      = delta,
-                    CovZ       = CovZ,
-                    e_fac      = e_fac,
-                    f_fac      = f_fac,
-                    sqrt_I_fac = sqrt_I_fac,
-                    seq_j      = seq_j,
-                    seq_jm1    = seq_jm1)$par
+  C        <- stats::optim(par        = c(0.5, 0.5),
+                           fn         = eval_C_pf,
+                           control    = list(abstol = 1e-7),
+                           J          = J,
+                           alpha      = alpha,
+                           beta       = beta,
+                           delta      = delta,
+                           CovZ       = CovZ,
+                           e_fac      = e_fac,
+                           f_fac      = f_fac,
+                           sqrt_I_fac = sqrt_I_fac,
+                           seq_j      = seq_j,
+                           seq_jm1    = seq_jm1)$par
   sqrt_I   <- sqrt_I_fac*abs(sum(C))/delta
   e        <- C[2]*e_fac
   f        <- delta*sqrt_I - C[1]*f_fac
