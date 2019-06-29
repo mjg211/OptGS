@@ -1,0 +1,9 @@
+---
+title: "design_J"
+output: md_document
+---
+
+# Maximal number of stages
+
+__OptGS__ assumes that some maximal number of stages, $J$, are
+allowed in the trial. Specify your chosen number of maximal stages here.

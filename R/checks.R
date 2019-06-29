@@ -24,7 +24,7 @@ check_default           <- function(condition, condition_name, value, name,
 }
 
 check_Delta             <- function(Delta, type) {
-  if (any(!(length(Delta) %in% 1:2), !is.numeric(Delta), Delta >= 1,
+  if (any(!(length(Delta) %in% 1:2), !is.numeric(Delta), Delta >= 10,
           is.infinite(Delta))) {
     stop("Delta must be a numeric vector of length 1 or 2, whose elements all ",
          "belong to (-\u221E, 1)")

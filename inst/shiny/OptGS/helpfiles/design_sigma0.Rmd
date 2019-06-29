@@ -1,0 +1,9 @@
+---
+title: "design_sigma0"
+output: md_document
+---
+
+# Standard deviation in the control arm
+
+__OptGS__ requires a value to be specified for the standard deviation,
+$\sigma_0$, of the responses accrued in the control arm. Specify your chosen value for this standard deviation here. It should be strictly positive.

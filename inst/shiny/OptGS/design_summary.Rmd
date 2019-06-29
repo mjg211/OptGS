@@ -1,0 +1,117 @@
+---
+output: html_document
+params:
+  J:            NA
+  alpha:        NA
+  beta:         NA
+  delta:        NA
+  sigma0:       NA
+  sigma1:       NA
+  ratio:        NA
+  shape:        NA
+  quantile_sub: NA
+  integer_n:    NA
+  n0:           NA
+  n1:           NA
+  n:            NA
+  e:            NA
+  f:            NA
+  opchar:       NA
+  plots:        NA
+---
+
+```{r setup, include = F}
+knitr::opts_chunk$set(echo    = F,
+                      results = "asis")
+```
+
+#### Design setting
+
+The trial will be designed to compare an experimental treatment (arm 1) to a control (arm 0), through a group-sequential trial with at most $J$ stages. Response $X_{ijk}$, from patient $i=1,\dots,n_k$, in arm $k=0,1$, in stage $j=1,\dots,J$, will be assumed to be distributed as $X_{ijk} \sim N(\mu_k,\sigma_k^2)$. Then, the hypothesis to be tested will be:
+$$ H_0 : \tau = \mu_1 - \mu_0 \le 0.$$
+The type-I error-rate will be desired to be at most $\alpha$, and the trial will be powered at level $1-\beta$ for the scenario where $\tau=\delta>0$ (the *alternative hypothesis* $H_1$).
+
+At interim analysis $j=1,\dots,J$, a standardised test statistic $Z_j$ will be
+compared to efficacy and futility boundaries $e_j$ and $f_j$ respectively.
+
+#### Inputs
+
+```{r, echo = F, results = "asis"}
+  J            <- params$J
+  alpha        <- params$alpha
+  beta         <- params$beta
+  delta        <- params$delta
+  sigma0       <- params$sigma0
+  sigma1       <- params$sigma1
+  ratio        <- params$ratio
+  shape        <- params$shape
+  quantile_sub <- params$quantile_sub
+  integer_n    <- params$integer_n
+  n0           <- params$n0
+  n1           <- params$n1
+  e            <- params$e
+  f            <- params$f
+  opchar       <- params$opchar
+  plots        <- params$plots
+```
+  
+```{r, echo = F, results = "asis"}
+if (shape == "haybittle_peto") {
+  shape_text        <- "Haybittle-Peto"
+} else if (shape == "near_optimal") {
+  shape_text        <- "Near-optimal"
+} else if (shape == "power_family") {
+  shape_text        <- "Power-family"
+} else if (shape == "triangular") {
+  shape_text        <- "Triangular-test"
+}
+
+if (quantile_sub) {
+  quantile_sub_text <- "will"
+} else {
+  quantile_sub_text <- "will not"
+}
+
+if (integer_n) {
+  integer_n_text    <- "will"
+} else {
+  integer_n_text    <- "will not"
+}
+
+if (plots) {
+  plot_text         <- "will"
+} else {
+  plot_text         <- "will not"
+}
+```
+
+The following choices were made:
+
+- A maximum of $J = \boldsymbol{`r J`}$ stages will be allowed in the trial.
+- The desired type-I error-rate will be $\alpha = \boldsymbol{`r alpha`}$.
+- The desired type-II error-rate will be $\alpha = \boldsymbol{`r beta`}$.
+- The trial will be powered for $\delta = \boldsymbol{`r delta`}$.
+- The standard deviation of the responses in the control arm will be assumed to be: $\sigma_0 = \boldsymbol{`r sigma0`}$.
+- The standard deviation of the responses in the experimetnal arm will be assumed to be: $\sigma_1 = \boldsymbol{`r sigma1`}$.
+- The allocation ratio to the experimental arm relative to the control arm will be: $r = \boldsymbol{`r ratio`)}$.
+- __`r shape_text`__ boundaries will be calculated.
+- Quantile substitution __`r integer_n_text`__ be used.
+- The sample size in each arm __`r integer_n_text`__ be required to be an integer.
+- Plots __`r plot_text`__ be produced.
+
+#### Outputs
+
+```{r, echo = F, results = "asis"}
+typeI  <- round(opchar[1, 2], 3)
+typeII <- round(1 - opchar[3, 2], 3)
+e_text <- paste0("(", paste(round(e, 3), collapse = ", "), ")")
+f_text <- paste0("(", paste(round(f, 3), collapse = ", "), ")")
+```
+
+- The required stage-wise group size in the control arm is: $n_0 = \boldsymbol{`r round(n0, 3)`}$.
+- The required stage-wise group size in the experimental arm is: $n_1 = \boldsymbol{`r round(n1, 3)`}$.
+- The type-I error-rate is: $\boldsymbol{`r typeI`}$.
+- The type-II error-rate is: $\boldsymbol{`r typeII`}$.
+- The following efficacy boundaries should be used: $\boldsymbol{`r e_text`}$.
+- The following futility boundaries should be used: $\boldsymbol{`r f_text`}$.
+

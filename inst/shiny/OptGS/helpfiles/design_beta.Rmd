@@ -1,0 +1,9 @@
+---
+title: "design_beta"
+output: md_document
+---
+
+# Desired type-II error-rate
+
+__OptGS__ requires the desired type-II error-rate, $\beta$, to be chosen. Specify your chosen type-II error-rate here. It should be strictly between 0 and
+1.

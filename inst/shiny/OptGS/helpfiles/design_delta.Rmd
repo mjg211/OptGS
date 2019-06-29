@@ -1,0 +1,9 @@
+---
+title: "design_delta1"
+output: md_document
+---
+
+# Treatment effect to power for
+
+__OptGS__ requires a value to be specified for the treatment effect to power the
+trial for, $\delta$. Specify your chosen treatment effect here. It should be strictly positive.

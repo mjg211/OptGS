@@ -3,7 +3,7 @@
 #'
 #' \code{des_opt()} determines optimal group-sequential clinical trial designs
 #' assuming the primary outcome variable is normally distributed, using the
-#' approach proposed in Wason \italic{et al} (2012).
+#' approach proposed in Wason \emph{et al} (2012).
 #'
 #' @param J A \code{\link{numeric}} indicating the chosen value for
 #' \ifelse{html}{\out{<i>J</i>}}{\eqn{J}}, the maximal allowed number of stages.

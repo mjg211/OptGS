@@ -1,0 +1,9 @@
+---
+title: "design_alpha"
+output: md_document
+---
+
+# Desired type-I error-rate
+
+__OptGS__ requires the desired type-I error-rate, $\alpha$, to be chosen. Specify your chosen type-I error-rate here. It should be strictly between 0 and
+1.

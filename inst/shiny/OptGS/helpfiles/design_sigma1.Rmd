@@ -1,0 +1,9 @@
+---
+title: "design_sigma1"
+output: md_document
+---
+
+# Standard deviation in the experimental arm
+
+__OptGS__ requires a value to be specified for the standard deviation,
+$\sigma_1$, of the responses accrued in the experimental arm. Specify your chosen value for this standard deviation here. It should be strictly positive.
