@@ -10,6 +10,7 @@ params:
   sigma1:       NA
   ratio:        NA
   shape:        NA
+  optimality:   NA
   quantile_sub: NA
   integer_n:    NA
   n0:           NA
@@ -52,6 +53,7 @@ compared to efficacy and futility boundaries $e_j$ and $f_j$ respectively.
   sigma1       <- params$sigma1
   ratio        <- params$ratio
   shape        <- params$shape
+  optimality   <- params$optimality
   quantile_sub <- params$quantile_sub
   integer_n    <- params$integer_n
   n0           <- params$n0
@@ -77,7 +79,24 @@ if (shape == "haybittle_peto") {
   shape_text        <- "Power-family"
 } else if (shape == "triangular") {
   shape_text        <- "Triangular-test"
+} else if (shape == "wang_tsiatis") {
+  shape_text        <- "Wang-Tsiatis"
 }
+
+if (shape == "near_optimal") {
+  if (optimality == "null_optimal") {
+    optimality_text <- "be to minimise the expected sample size under the null"
+  } else if (optimality == "alt_optimal") {
+    optimality_text <- "be to minimise the expected sample size under the alternative"
+  } else if (optimality == "delta_minimax") {
+    optimality_text <- "be to minimise the maximum expected sample size"
+  } else if (optimality == "balanced") {
+    optimality_text <- "be a balanced near-optimal design"
+  }
+} else {
+  optimality_text <- "not be used (i.e., a non-optimised design has been chosen)"
+}
+
 
 if (quantile_sub) {
   quantile_sub_text <- "will"
@@ -108,6 +127,7 @@ The following choices were made:
 - The standard deviation of the responses in the experimetnal arm will be assumed to be: $\sigma_1 = \boldsymbol{`r sigma1`}$.
 - The allocation ratio to the experimental arm relative to the control arm will be: $r = \boldsymbol{`r ratio`)}$.
 - __`r shape_text`__ boundaries will be calculated.
+- The optimality criteria will __`r optimality_text`__.
 - Quantile substitution __`r integer_n_text`__ be used.
 - The sample size in each arm __`r integer_n_text`__ be required to be an integer.
 - Plots __`r plot_text`__ be produced.

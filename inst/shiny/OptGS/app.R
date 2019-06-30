@@ -205,6 +205,7 @@ ui <- shinydashboard::dashboardPage(
                 size    = "m",
                 colour  = "black"),
             shiny::uiOutput("design_Delta"),
+            shiny::uiOutput("design_w"),
             shinyWidgets::prettySwitch(
               inputId = "design_quantile_sub",
               label   = "Use quantile substitution",
@@ -337,7 +338,7 @@ ui <- shinydashboard::dashboardPage(
         shiny::fluidRow(
           shinydashboard::box(
             title       = "Stopping boundaries",
-            width       = 6,
+            width       = 12,
             solidHeader = T,
             collapsible = T,
             status      = "primary",
@@ -347,7 +348,9 @@ ui <- shinydashboard::dashboardPage(
               color = "#3C8DBC",
               size  = 1/3
             )
-          ),
+          )
+        ),
+        shiny::fluidRow(
           shinydashboard::box(
             title       = "Power curve",
             width       = 6,
@@ -360,9 +363,7 @@ ui <- shinydashboard::dashboardPage(
               color = "#3C8DBC",
               size  = 1/3
             )
-          )
-        ),
-        shiny::fluidRow(
+          ),
           shinydashboard::box(
             title       = "Expected sample size curve",
             width       = 6,
@@ -371,19 +372,6 @@ ui <- shinydashboard::dashboardPage(
             status      = "primary",
             shinycssloaders::withSpinner(
               shiny::plotOutput("design_ess"),
-              type  = 6,
-              color = "#3C8DBC",
-              size  = 1/3
-            )
-          ),
-          shinydashboard::box(
-            title       = "Median sample size curve",
-            width       = 6,
-            solidHeader = T,
-            collapsible = T,
-            status      = "primary",
-            shinycssloaders::withSpinner(
-              shiny::plotOutput("design_median"),
               type  = 6,
               color = "#3C8DBC",
               size  = 1/3
@@ -574,6 +562,20 @@ server <- function(input, output, session) {
     }
   })
 
+  output$design_w <- renderUI({
+    if (input$design_shape == "near_optimal") {
+      shiny::selectInput(
+        inputId = "design_optimality",
+        label   = "Optimality criteria:",
+        choices = c("Null-optimal"        = "null_optimal",
+                    "Alternative-optimal" = "alt_optimal",
+                    "delta-minimax"       = "delta_minimax",
+                    "Balanced"            = "balanced"),
+        selected = "null_optimal"
+      )
+    }
+  })
+
   output$design_warning <- renderUI({
     if (all(input$design_J %in% c(4, 5),
             input$design_shape == "near_optimal")) {
@@ -633,6 +635,15 @@ server <- function(input, output, session) {
                       quantile_sub = input$design_quantile_sub,
                       integer_n    = input$design_integer_n)
     } else {
+      if (input$design_optimality == "null_optimal") {
+        w <- c(1, 0, 0, 0)
+      } else if (input$design_optimality == "alt_optimal") {
+        w <- c(0, 1, 0, 0)
+      } else if (input$design_optimality == "delta_minimax") {
+        w <- c(0, 0, 1, 0)
+      } else if (input$design_optimality == "balanced") {
+        w <- rep(0.25, 4)
+      }
       design <-
         OptGS::des_nearopt(J            = input$design_J,
                            alpha        = input$design_alpha,
@@ -641,7 +652,7 @@ server <- function(input, output, session) {
                            sigma0       = input$design_sigma0,
                            sigma1       = input$design_sigma1,
                            ratio        = input$design_ratio,
-                           w            = c(1, 0, 0, 0),
+                           w            = w,
                            quantile_sub = input$design_quantile_sub,
                            integer_n    = input$design_integer_n)
     }
@@ -660,6 +671,7 @@ server <- function(input, output, session) {
                            sigma1       = input$design_sigma1,
                            ratio        = input$design_ratio,
                            shape        = input$design_shape,
+                           optimality   = input$design_optimality,
                            quantile_sub = input$design_quantile_sub,
                            integer_n    = input$design_integer_n,
                            n0           = design$n0,
@@ -737,7 +749,6 @@ server <- function(input, output, session) {
 
   output$design_alpha_box <- shinydashboard::renderValueBox({
     input$design_update
-    print(des()$opchar)
     if (des()$opchar[1, 2] <=
         shiny::isolate(input$design_alpha) + 1e-4) {
       icon_choice <- "thumbs-up"
@@ -858,6 +869,7 @@ server <- function(input, output, session) {
                          sigma1       = des()$sigma1,
                          ratio        = des()$ratio,
                          shape        = input$design_shape,
+                         optimality   = input$design_optimality,
                          quantile_sub = des()$quantile_sub,
                          integer_n    = des()$integer_n,
                          plots        = input$design_plots,
