@@ -120,15 +120,15 @@ to understand the purpose of the different functions.
 
 ## Support
 
-An extensive guide to using **OptGS** is provided in the form of a
-package vignette, accessible using `vignette("OptGS")`. For v.1.1.1 and
-earlier, [Wason (2015)](https://doi.org/10.18637/jss.v066.i02) also
-provides a detailed introduction to the package.
+An extensive guide to using **OptGS** will soon be provided in the form
+of a package vignette. For v.1.1.1 and earlier, [Wason
+(2015)](https://doi.org/10.18637/jss.v066.i02) also provides a detailed
+introduction to the package.
 
-If you cannot find the answer to your problem in either of these
-locations, or a function is returning an unexpected error for your
-inputs, please contact James Wason (<james.wason@newcastle.ac.uk>) or
-Michael Grayling (<michael.grayling@newcastle.ac.uk>) for assistance.
+If you cannot find the answer to a problem, or a function is returning
+an unexpected error for your inputs, please contact James Wason
+(<james.wason@newcastle.ac.uk>) or Michael Grayling
+(<michael.grayling@newcastle.ac.uk>) for assistance.
 
 ## References
 
