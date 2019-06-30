@@ -7,3 +7,6 @@ design. Specify your choice here.
 
 If Wang-Tsiatis or power-family boundaries are chosen, additional boxes
 will appear to allow their associated shape parameters to be specified.
+
+If near-optimal boundaries are chosen, an additional box will appear to
+allow the optimality criteria to be specified.
