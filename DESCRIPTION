@@ -1,16 +1,18 @@
 Package: OptGS
 Type: Package
-Title: Optimal and near-optimal group-sequential designs for clinical trials
-    with continuous outcomes
-Version: 2.0.1
-Date: 2019-06-26
-Authors@R: c(utils::person("James", "Wason",
+Title: Optimal and Near-optimal Group-sequential Designs for Clinical Trials
+    with Continuous Outcomes
+Version: 2.1.0
+Date: 2021-03-19
+Authors@R: c(utils::person(given   = "James MS",
+                           family  = "Wason",
                            email   = "james.wason@newcastle.ac.uk",
                            role    = c("aut", "cre"),
                            comment = c(ORCID = "0000-0002-4691-126X")),
-             utils::person("Michael", "Grayling",
+             utils::person(given   = "Michael J",
+                           family  = "Grayling",
                            email   = "michael.grayling@newcastle.ac.uk",
-                           role    = "ctb",
+                           role    = "aut",
                            comment = c(ORCID = "0000-0002-0680-6668")))
 Description: OptGS provides a suite of functions to assist with the design,
     analysis, and visualization of randomized two-arm group-sequential clinical
@@ -20,17 +22,18 @@ Description: OptGS provides a suite of functions to assist with the design,
     Additional functions allow point estimates, p-values, and confidence
     intervals to be determined for possible results in these designs. Plotting
     functions also permit the informative depiction of several important
-    quantities.
+    quantities. Further details can be found in Wason (2015)
+    <doi:10.18637/jss.v066.i02>.
 License: MIT + file LICENSE
 URL: https://github.com/mjg211/OptGS
 BugReports: https://github.com/mjg211/OptGS/issues
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 6.1.1
-Depends: R (>= 3.5.0)
-Imports: dplyr,
+RoxygenNote: 7.1.1
+Imports:
+    dplyr,
     GA,
-    ggplot2 (>= 3.1.0),
+    ggplot2,
     ggthemes,
     iterpc,
     mvtnorm,

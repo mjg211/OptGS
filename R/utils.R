@@ -1,4 +1,4 @@
-an_internal  <- function(des, Zj, alpha, summary) {
+an_internal   <- function(des, Zj, alpha, summary) {
   nrow_Zj        <- nrow(Zj)
   sqrt_I         <- sqrt(des$I)
   an             <- matrix(0, nrow_Zj, 10)
@@ -57,7 +57,6 @@ an_internal  <- function(des, Zj, alpha, summary) {
   an
 }
 
-
 covariance    <- function(sqrt_I) {
   CovZ            <- diag(length(sqrt_I))
   for (k1 in seq_len(length(sqrt_I) - 1) + 1L) {
@@ -74,12 +73,17 @@ minus_ess     <- function(tau, e, f, sqrt_I, CovZ, n) {
                   stats::pnorm(e[1], mean = means[1], lower.tail = F),
                 numeric(J - 1))
   if (J > 2) {
-    for (j in 2:(J - 1)) {
-      S[j] <-
-        mvtnorm::pmvnorm(c(f[1:(j - 1)], -Inf), c(e[1:(j - 1)], f[j]),
-                         means[1:j], sigma = CovZ[1:j, 1:j])[1] +
-        mvtnorm::pmvnorm(c(f[1:(j - 1)], e[j]), c(e[1:(j - 1)], Inf),
-                         means[1:j], sigma = CovZ[1:j, 1:j])[1]
+    S[2]   <- pbvnorm(c(f[1], -Inf), c(e[1], f[2]), means[1:2],
+                      CovZ[1:2, 1:2]) +
+      pbvnorm(c(f[1], e[2]), c(e[1], Inf), means[1:2], CovZ[1:2, 1:2])
+    if (J > 3) {
+      for (j in 3:(J - 1)) {
+        S[j] <-
+          mvtnorm::pmvnorm(c(f[1:(j - 1)], -Inf), c(e[1:(j - 1)], f[j]),
+                           means[1:j], sigma = CovZ[1:j, 1:j])[1] +
+          mvtnorm::pmvnorm(c(f[1:(j - 1)], e[j]), c(e[1:(j - 1)], Inf),
+                           means[1:j], sigma = CovZ[1:j, 1:j])[1]
+      }
     }
   }
   S[J]     <- 1 - sum(S[1:(J - 1)])
@@ -102,17 +106,23 @@ eval_C_pf     <- function(C, J, alpha, beta, delta, CovZ, e_fac, f_fac,
   means_H1  <- sqrt_I_fac*abs(sum(C))
   e         <- C[2]*e_fac
   f         <- means_H1 - C[1]*f_fac
-  notP_H1   <- beta - stats::pnorm(f[1], mean = means_H1[1])[1]
-  P_H0      <- alpha - stats::pnorm(e[1], lower.tail = F)[1]
-  for (j in 2:J) {
-    notP_H1 <- notP_H1 - mvtnorm::pmvnorm(c(f[seq_jm1[[j]]], -Inf),
-                                          c(e[seq_jm1[[j]]], f[j]),
-                                          means_H1[seq_j[[j]]],
-                                          sigma = CovZ[seq_j[[j]],
-                                                       seq_j[[j]]])[1]
-    P_H0    <- P_H0 - mvtnorm::pmvnorm(c(f[seq_jm1[[j]]], e[j]),
-                                       c(e[seq_jm1[[j]]], Inf),
-                                       sigma = CovZ[seq_j[[j]], seq_j[[j]]])[1]
+  notP_H1   <- beta - stats::pnorm(f[1], mean = means_H1[1])[1] -
+    pbvnorm(c(f[seq_jm1[[2]]], -Inf), c(e[seq_jm1[[2]]], f[2]),
+            means_H1[seq_j[[2]]], CovZ[seq_j[[2]], seq_j[[2]]])
+  P_H0      <- alpha - stats::pnorm(e[1], lower.tail = F)[1] -
+    pbvnorm(c(f[seq_jm1[[2]]], e[2]), c(e[seq_jm1[[2]]], Inf), numeric(2),
+            CovZ[seq_j[[2]], seq_j[[2]]])
+  if (J > 2) {
+    for (j in 3:J) {
+      notP_H1 <- notP_H1 - mvtnorm::pmvnorm(c(f[seq_jm1[[j]]], -Inf),
+                                            c(e[seq_jm1[[j]]], f[j]),
+                                            means_H1[seq_j[[j]]],
+                                            sigma = CovZ[seq_j[[j]],
+                                                         seq_j[[j]]])[1]
+      P_H0    <- P_H0 - mvtnorm::pmvnorm(c(f[seq_jm1[[j]]], e[j]),
+                                         c(e[seq_jm1[[j]]], Inf),
+                                         sigma = CovZ[seq_j[[j]], seq_j[[j]]])[1]
+    }
   }
   P_H0^2 + notP_H1^2
 }
@@ -158,7 +168,7 @@ eval_Delta_pf <- function(Delta, J, alpha, beta, delta, sigma0, sigma1, ratio,
                                         n      = n)$value
   }
   if (w[4] > 0) {
-    score  <- score + w[4]*n[J]
+    score  <- score - w[4]*n[J]
   }
   score
 }
@@ -171,6 +181,17 @@ eval_n0_hp_wt <- function(n0, delta, sigma0, sigma1, ratio, CovZ, e, fu,
 
 information   <- function(n0, J, sigma0, sigma1, ratio) {
   ((1:J)/J)*(sigma0^2/(n0*J) + sigma1^2/(ratio*n0*J))^-1
+}
+
+opchar_fixed  <- function(tau, e, sqrt_I, n) {
+  len_tau          <- length(tau)
+  means            <- tau*sqrt_I
+  opchar           <- cbind(tau, numeric(len_tau))
+  for (t in 1:len_tau) {
+    opchar[t, 2]   <- stats::pnorm(e[1], mean = means[t], lower.tail = F)
+  }
+  colnames(opchar) <- c("tau", "P(tau)")
+  tibble::as_tibble(opchar)
 }
 
 opchar_int    <- function(tau, e, f, sqrt_I, CovZ, n) {
@@ -241,7 +262,50 @@ optimal       <- function(par, J, alpha, beta, delta, sigma0, sigma1, ratio, w,
                ((1 - opchar$`P(tau)`[2]) - beta)/beta)
 }
 
-p_value  <- function(theta, J, e, fu, sqrt_I, CovZ, h = 0) {
+optimal_t     <- function(boundaries, n0_index, J, alpha, beta, delta, ratio,
+                          w, replicates, penalty, data_tau_hat, data_sqrt_I_hat,
+                          poss_n0) {
+  n0         <- poss_n0[n0_index + 1L]
+  seq_J      <- 1:J
+  n0v        <- n0*seq_J
+  n          <- (n0 + as.integer(ratio*n0))*seq_J
+  f          <- boundaries[seq_J]
+  e          <- c(boundaries[seq_J[-J]] + boundaries[(J + 1):(2*J - 1)],
+                  boundaries[J])
+  P_HG       <- P_HA <- N_HG <- N_HA  <- 0L
+  for (rep in 1:replicates) {
+    for (j in seq_J) {
+      Tj     <- data_tau_hat[rep, n0v[j]]*data_sqrt_I_hat[rep, n0v[j]]
+      if (Tj <= f[j]) {
+        N_HG <- N_HG + n[j]
+        break
+      } else if (Tj > e[j]) {
+        P_HG <- P_HG + 1L
+        N_HG <- N_HG + n[j]
+        break
+      }
+    }
+    for (j in seq_J) {
+      Tj     <- (data_tau_hat[rep, n0v[j]] + delta)*data_sqrt_I_hat[rep,
+                                                                    n0v[j]]
+      if (Tj <= f[j]) {
+        N_HA <- N_HA + n[j]
+        break
+      } else if (Tj > e[j]) {
+        P_HA <- P_HA + 1L
+        N_HA <- N_HA + n[j]
+        break
+      }
+    }
+  }
+  P_HG       <- sum(P_HG)/replicates
+  notP_HA    <- 1 - sum(P_HA)/replicates
+  sum(w*c(N_HG/replicates, N_HA/replicates, n[J])) +
+    penalty*(as.numeric(P_HG > alpha)*(P_HG - alpha)/alpha +
+               as.numeric(notP_HA > beta)*(notP_HA - beta)/beta)
+}
+
+p_value       <- function(theta, J, e, fu, sqrt_I, CovZ, h = 0) {
   theta_sqrt_I <- theta*sqrt_I
   P            <- stats::pnorm(e[1], theta_sqrt_I[1], lower.tail = F)
   if (J > 1) {
@@ -253,6 +317,44 @@ p_value  <- function(theta, J, e, fu, sqrt_I, CovZ, h = 0) {
     }
   }
   P - h
+}
+
+pbvnorm       <- function(lower, upper, mean, sigma, sqrt_sigma, rho) {
+  if (missing(sqrt_sigma)) {
+    sqrt_sigma <- sqrt(c(sigma[1, 1], sigma[2, 2]))
+  }
+  if (missing(rho)) {
+    rho        <- sigma[1, 2]/(sqrt_sigma[1]*sqrt_sigma[2])
+  }
+  x            <- (lower - mean)/c(sqrt_sigma[1], sqrt_sigma[2])
+  y            <- (upper - mean)/c(sqrt_sigma[1], sqrt_sigma[2])
+  if (all(is.infinite(y))) {
+    I          <- 1
+  } else if (is.infinite(y[1])) {
+    I          <- stats::pnorm(y[2])
+  } else if (is.infinite(y[2])) {
+    I          <- stats::pnorm(y[1])
+  } else {
+    I          <- pbv::pbv_rcpp_pbvnorm(y[1], y[2], rho)
+  }
+  if (all(is.finite(x))) {
+    I          <- I + pbv::pbv_rcpp_pbvnorm(x[1], x[2], rho)
+  }
+  if (is.finite(x[2])) {
+    if (is.infinite(y[1])) {
+      I        <- I - stats::pnorm(x[2])
+    } else {
+      I        <- I - pbv::pbv_rcpp_pbvnorm(y[1], x[2], rho)
+    }
+  }
+  if (is.finite(x[1])) {
+    if (is.infinite(y[2])) {
+      I        <- I - stats::pnorm(x[1])
+    } else {
+      I        <- I - pbv::pbv_rcpp_pbvnorm(x[1], y[2], rho)
+    }
+  }
+  I
 }
 
 power         <- function(tau, e, f, sqrt_I, CovZ) {

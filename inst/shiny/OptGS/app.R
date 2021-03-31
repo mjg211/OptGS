@@ -2,7 +2,7 @@
 
 library(magrittr)
 library(OptGS)
-options(shiny.sanitize.errors = T)
+options(shiny.sanitize.errors = TRUE)
 
 ##### UI #######################################################################
 ui <- shinydashboard::dashboardPage(
@@ -465,7 +465,7 @@ server <- function(input, output, session) {
   shiny::observeEvent(input$design_alpha, {
     shinyFeedback::feedbackDanger(
       inputId   = "design_alpha",
-      condition = any(input$design_alpha <= 0,
+      show      = any(input$design_alpha <= 0,
                       input$design_alpha >= 1),
       text      = "Must be strictly between 0 and 1")
   })
@@ -473,7 +473,7 @@ server <- function(input, output, session) {
   shiny::observeEvent(input$design_beta, {
     shinyFeedback::feedbackDanger(
       inputId   = "design_beta",
-      condition = any(input$design_beta <= 0,
+      show      = any(input$design_beta <= 0,
                       input$design_beta >= 1),
       text      = "Must be strictly between 0 and 1")
   })
@@ -481,28 +481,28 @@ server <- function(input, output, session) {
   shiny::observeEvent(input$design_delta, {
     shinyFeedback::feedbackDanger(
       inputId   = "design_delta",
-      condition = (input$design_delta <= 0),
+      show      = (input$design_delta <= 0),
       text      = "Must be strictly positive")
   })
 
   shiny::observeEvent(input$design_sigma0, {
     shinyFeedback::feedbackDanger(
       inputId   = "design_sigma0",
-      condition = (input$design_sigma0 <= 0),
+      show      = (input$design_sigma0 <= 0),
       text      = "Must be strictly positive")
   })
 
   shiny::observeEvent(input$design_sigma1, {
     shinyFeedback::feedbackDanger(
       inputId   = "design_sigma1",
-      condition = (input$design_sigma1 <= 0),
+      show      = (input$design_sigma1 <= 0),
       text      = "Must be strictly positive")
   })
 
   shiny::observeEvent(input$design_ratio, {
     shinyFeedback::feedbackDanger(
       inputId   = "design_ratio",
-      condition = (input$design_ratio <= 0),
+      show      = (input$design_ratio <= 0),
       text      = "Must be strictly positive")
   })
 
@@ -510,18 +510,18 @@ server <- function(input, output, session) {
                         input$design_DeltaF), {
     shinyFeedback::feedbackDanger(
       inputId   = "design_DeltaE",
-      condition = input$design_DeltaE >= 1,
+      show      = input$design_DeltaE >= 1,
       text      = "Must be strictly less than 1")
     shinyFeedback::feedbackDanger(
       inputId   = "design_DeltaF",
-      condition = input$design_DeltaF >= 1,
+      show      = input$design_DeltaF >= 1,
       text      = "Must be strictly less than 1")
   })
 
   shiny::observeEvent(input$design_filename, {
     shinyFeedback::feedbackWarning(
       inputId   = "design_filename",
-      condition = any(strsplit(input$design_filename,
+      show      = any(strsplit(input$design_filename,
                                split = "")[[1]] %in%
                         c('/', '\\', '?', "%", "*", ":", "|", "<", ">")),
       text      = paste0('It is generally inadvisable to use the characters /',
@@ -695,9 +695,9 @@ server <- function(input, output, session) {
     design$boundaries       <- plot(design, output = T)$plots$J
     if (input$design_plots) {
       opchar                <-
-        opchar(design,
-               tau = seq(-input$design_delta, 2*input$design_delta,
-                         length.out = as.numeric(input$design_density)))
+        OptGS::opchar(design,
+                      tau = seq(-input$design_delta, 2*input$design_delta,
+                                length.out = as.numeric(input$design_density)))
       design$opchar         <- rbind(design$opchar, opchar$opchar)
       plots                 <- plot(opchar, output = T)
       design$ess            <- plots$plots$`ESS(tau)`
