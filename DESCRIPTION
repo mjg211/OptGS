@@ -2,7 +2,7 @@ Package: OptGS
 Type: Package
 Title: Optimal and Near-optimal Group-sequential Designs for Clinical Trials
     with Continuous Outcomes
-Version: 2.2.0
+Version: 2.2.1
 Date: 2021-05-26
 Authors@R: c(utils::person(given   = "James MS",
                            family  = "Wason",
@@ -38,6 +38,7 @@ Imports:
     iterpc,
     magrittr,
     mvtnorm,
+    pbv,
     scales,
     tibble,
     tidyr
