@@ -5,9 +5,18 @@
 \title{Build a group-sequential clinical trial design object for a normally
 distributed primary outcome}
 \usage{
-build(alpha = 0.05, beta = 0.2, delta = 0.2, e = c(1.88, 1.77),
-  f = c(0.63, 1.77), n0 = 180, n1 = n0, sigma0 = 1,
-  sigma1 = sigma0, summary = F)
+build(
+  alpha = 0.05,
+  beta = 0.2,
+  delta = 0.2,
+  e = c(1.88, 1.77),
+  f = c(0.63, 1.77),
+  n0 = 180,
+  n1 = n0,
+  sigma0 = 1,
+  sigma1 = sigma0,
+  summary = FALSE
+)
 }
 \arguments{
 \item{alpha}{A \code{\link{numeric}} indicating the value of
@@ -39,6 +48,10 @@ corresponding element from \code{e}. Defaults to \code{c(0.63, 1.77)}.}
 \ifelse{html}{\out{<i>n</i><sub>0</sub>}}{\eqn{n_0}}, the group size in the
 control arm, for the design of interest. Defaults to \code{180}.}
 
+\item{n1}{A \code{\link{numeric}} indicating the value of
+\ifelse{html}{\out{<i>n</i><sub>1</sub>}}{\eqn{n_1}}, the group size in the
+experimental arm, for the design of interest. Defaults to \code{n0}.}
+
 \item{sigma0}{A \code{\link{numeric}} indicating the value of
 \ifelse{html}{\out{<i>&sigma;</i><sub>0</sub>}}{\eqn{\sigma_0}}, the
 standard deviation of the responses in the control arm in the design of
@@ -51,17 +64,13 @@ interest. Must be strictly positive. Defaults to \code{sigma0}.}
 
 \item{summary}{A \code{\link{logical}} variable indicating whether a summary
 of the function's progress should be printed to the console. Defaults to
-\code{F}.}
-
-\item{n0}{A \code{\link{numeric}} indicating the value of
-\ifelse{html}{\out{<i>n</i><sub>1</sub>}}{\eqn{n_0}}, the group size in the
-experimental arm, for the design of interest. Defaults to \code{n0}.}
+\code{FALSE}.}
 }
 \value{
 A \code{\link{list}} with additional class \code{"OptGS_des"}. It
 will contain each of the input variables (subject to internal modification),
-relating to the various design functions from \code{\link[OptGS]{OptGS}},
-along with the following elements:
+relating them to the outputs of the various group-sequential design functions
+in \code{\link{OptGS}}, along with additional elements including:
 \itemize{
 \item \code{CovZ}: A \code{\link{numeric}} \code{\link{matrix}} giving
 \ifelse{html}{\out{Cov(<b><i>Z</i></b>)}}{\eqn{Cov(\bold{Z})}}, the
@@ -91,13 +100,13 @@ group-sequential trial design in mind.
 }
 \examples{
 # The design for the default parameters
-des     <- build()
+des   <- build()
 # A three-stage design
-des_3   <- build(e = c(), f = c(), n0 = , n1 = )
+des_3 <- build(e = c(2.85, 2.01, 1.65), f = c(-0.18, 0.94, 1.65), n0 = 115)
 }
 \seealso{
-\code{\link{an}}, \code{\link{des_gs}}, \code{\link{des_nearopt}},
-\code{\link{des_opt}}, \code{\link{opchar}}, \code{\link{sim}},
-\code{\link{plot.OptGS_des}}, \code{\link{plot.OptGS_opchar}},
-\code{\link{print.OptGS_des}}, \code{\link{summary.OptGS_des}}.
+\code{\link{des_gs}}, \code{\link{des_nearopt}},
+\code{\link{des_opt}}, \code{\link{est}}, \code{\link{sim}},
+\code{\link{plot.OptGS_des}}, \code{\link{print.OptGS_des}},
+\code{\link{summary.OptGS_des}}
 }

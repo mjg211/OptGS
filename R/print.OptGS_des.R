@@ -22,7 +22,7 @@ print.OptGS_des <- function(x, ...) {
 
   ##### Check input variables ##################################################
 
-  #check_OptGS_des(x, "x")
+  check_OptGS_des(x, "x")
 
   ##### Print summary ##########################################################
 

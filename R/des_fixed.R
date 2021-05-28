@@ -1,6 +1,5 @@
 #' Design a fixed-sample (single-stage) clinical trial for a normally
-#' distributed primary
-#' outcome
+#' distributed primary outcome
 #'
 #' \code{des_fixed()} determines fixed-sample (i.e., single-stage) clinical
 #' trial designs assuming the primary outcome variable is normally distributed.
@@ -28,41 +27,28 @@
 #' Defaults to \code{1}.
 #' @param quantile_sub A \code{\link{logical}} variable indicating whether
 #' quantile substitution should be applied to the identified rejection boundary.
-#' Defaults to \code{F}.
+#' Defaults to \code{FALSE}.
 #' @param integer_n A \code{\link{logical}} variable indicating whether the
 #' computed values for \ifelse{html}{\out{<i>n</i><sub>0</sub>}}{\eqn{n_0}} and
 #' \ifelse{html}{\out{<i>n</i><sub>1</sub>}}{\eqn{n_1}}, the group sizes in the
 #' control and experimental arms, should be forced to be whole numbers. Defaults
-#' to \code{T}.
+#' to \code{TRUE}.
 #' @param summary A \code{\link{logical}} variable indicating whether a summary
 #' of the function's progress should be printed to the console. Defaults to
-#' \code{F}.
+#' \code{FALSE}.
 #' @return A \code{\link{list}} with additional class \code{"OptGS_des"}. It
 #' will contain each of the input variables (subject to internal modification),
-#' relating to the various design functions from \code{\link[OptGS]{OptGS}},
-#' along with the following elements:
+#' relating them to the outputs of the various group-sequential design functions
+#' in \code{\link{OptGS}}, along with additional elements including:
 #' \itemize{
-#' \item \code{CovZ}: A \code{\link{numeric}} \code{\link{matrix}} giving
-#' \ifelse{html}{\out{Cov(<b><i>Z</i></b>)}}{\eqn{Cov(\bold{Z})}}, the
-#' covariance between the standardised test statistics for the identified
+#' \item \item \code{n}: A \code{\link{numeric}} giving
+#' \ifelse{html}{\out{<i>n</i>}}{\eqn{n}}, the sample size for the identified
 #' design.
-#' \item \code{e}: A \code{\link{numeric}} \code{\link{vector}} giving
-#' \ifelse{html}{\out{<b><i>e</i></b>}}{\eqn{\bold{e}}}, the efficacy stopping
-#' boundaries for the identified design.
-#' \item \code{f}: A \code{\link{numeric}} \code{\link{vector}} giving
-#' \ifelse{html}{\out{<b><i>f</i></b>}}{\eqn{\bold{f}}}, the futility stopping
-#' boundaries for the identified design.
-#' \item \code{I}: A \code{\link{numeric}} \code{\link{vector}} giving
-#' \ifelse{html}{\out{<b><i>I</i></b>}}{\eqn{\bold{I}}}, the vector of
-#' information levels for the identified design.
-#' \item \code{n}: A \code{\link{numeric}} \code{\link{vector}} giving
-#' \ifelse{html}{\out{<b><i>n</i></b>}}{\eqn{\bold{n}}}, the vector of
-#' stage-wise sample sizes for the identified design.
 #' \item \code{n0}: A \code{\link{numeric}} giving
-#' \ifelse{html}{\out{<i>n</i><sub>0</sub>}}{\eqn{n_0}}, the group size in the
+#' \ifelse{html}{\out{<i>n</i><sub>0</sub>}}{\eqn{n_0}}, the sample size in the
 #' control arm for the identified design.
 #' \item \code{n1}: A \code{\link{numeric}} giving
-#' \ifelse{html}{\out{<i>n</i><sub>1</sub>}}{\eqn{n_1}}, the group size in the
+#' \ifelse{html}{\out{<i>n</i><sub>1</sub>}}{\eqn{n_1}}, the sample size in the
 #' experimental arm for the identified design.
 #' \item \code{name}: A \code{\link{character}} string giving a name for the
 #' identified design.
@@ -73,16 +59,16 @@
 #' }
 #' @examples
 #' # The fixed-sample design for the default parameters
-#' des     <- des_fixed()
-#' @seealso \code{\link{an}}, \code{\link{build}}, \code{\link{des_gs}},
-#' \code{\link{des_nearopt}}, \code{\link{des_opt}}, \code{\link{opchar}},
+#' des <- des_fixed()
+#' @seealso \code{\link{des_gs}}, \code{\link{des_nearopt}},
+#' \code{\link{des_opt}}, \code{\link{opchar}},
 #' \code{\link{sim}}, \code{\link{plot.OptGS_des}},
 #' \code{\link{plot.OptGS_opchar}}, \code{\link{print.OptGS_des}},
-#' \code{\link{summary.OptGS_des}}.
+#' \code{\link{summary.OptGS_des}}
 #' @export
 des_fixed <- function(alpha = 0.05, beta = 0.2, delta = 0.2, sigma0 = 1,
                       sigma1 = sigma0, ratio = 1, quantile_sub = FALSE,
-                      integer = TRUE, summary = FALSE) {
+                      integer_n = TRUE, summary = FALSE) {
 
   ##### Check input variables ##################################################
 
@@ -93,7 +79,7 @@ des_fixed <- function(alpha = 0.05, beta = 0.2, delta = 0.2, sigma0 = 1,
   check_real_range_strict(sigma1, "sigma1", c(0, Inf), 1)
   check_real_range_strict(ratio, "ratio", c(0, Inf), 1)
   check_logical(quantile_sub, "quantile_sub")
-  check_logical(integer, "integer")
+  check_logical(integer_n, "integer")
   check_logical(summary, "summary")
 
   ##### Print summary ##########################################################
@@ -119,14 +105,14 @@ des_fixed <- function(alpha = 0.05, beta = 0.2, delta = 0.2, sigma0 = 1,
     n0   <- as.integer(n0)
     n1   <- as.integer(n1)
   } else {
-    n1   <- n0*ratio
+    n1          <- n0*ratio
   }
-  I      <- information(n0, 1, sigma0, sigma1, ratio)
-  n      <- n0 + n1
+  I             <- information(n0, 1, sigma0, sigma1, ratio)
+  n             <- n0 + n1
   if (quantile_sub) {
-    e    <- stats::qt(stats::pnorm(e), n[1]*(1 + ratio) - 2)
+    e           <- stats::qt(stats::pnorm(e), n*(1 + ratio) - 2)
   }
-  opchar <- opchar_fixed(c(0, delta), e, sqrt(I), n)
+  opchar        <- opchar_fixed(c(0, delta), e, sqrt(I), n)
 
   ##### Output results #########################################################
 
@@ -153,7 +139,7 @@ des_fixed <- function(alpha = 0.05, beta = 0.2, delta = 0.2, sigma0 = 1,
                         sigma0       = sigma0,
                         sigma1       = sigma1,
                         summary      = summary,
-                        w            = w)
+                        w            = NA)
   class(output) <- c(class(output), "OptGS_des")
   output
 

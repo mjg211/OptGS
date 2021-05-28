@@ -29,8 +29,8 @@
 #' @param n0 A \code{\link{numeric}} indicating the value of
 #' \ifelse{html}{\out{<i>n</i><sub>0</sub>}}{\eqn{n_0}}, the group size in the
 #' control arm, for the design of interest. Defaults to \code{180}.
-#' @param n0 A \code{\link{numeric}} indicating the value of
-#' \ifelse{html}{\out{<i>n</i><sub>1</sub>}}{\eqn{n_0}}, the group size in the
+#' @param n1 A \code{\link{numeric}} indicating the value of
+#' \ifelse{html}{\out{<i>n</i><sub>1</sub>}}{\eqn{n_1}}, the group size in the
 #' experimental arm, for the design of interest. Defaults to \code{n0}.
 #' @param sigma0 A \code{\link{numeric}} indicating the value of
 #' \ifelse{html}{\out{<i>&sigma;</i><sub>0</sub>}}{\eqn{\sigma_0}}, the
@@ -42,11 +42,11 @@
 #' interest. Must be strictly positive. Defaults to \code{sigma0}.
 #' @param summary A \code{\link{logical}} variable indicating whether a summary
 #' of the function's progress should be printed to the console. Defaults to
-#' \code{F}.
+#' \code{FALSE}.
 #' @return A \code{\link{list}} with additional class \code{"OptGS_des"}. It
 #' will contain each of the input variables (subject to internal modification),
-#' relating to the various design functions from \code{\link[OptGS]{OptGS}},
-#' along with the following elements:
+#' relating them to the outputs of the various group-sequential design functions
+#' in \code{\link{OptGS}}, along with additional elements including:
 #' \itemize{
 #' \item \code{CovZ}: A \code{\link{numeric}} \code{\link{matrix}} giving
 #' \ifelse{html}{\out{Cov(<b><i>Z</i></b>)}}{\eqn{Cov(\bold{Z})}}, the
@@ -69,29 +69,28 @@
 #' }
 #' @examples
 #' # The design for the default parameters
-#' des     <- build()
+#' des   <- build()
 #' # A three-stage design
-#' des_3   <- build(e = c(), f = c(), n0 = , n1 = )
-#' @seealso \code{\link{an}}, \code{\link{des_gs}}, \code{\link{des_nearopt}},
-#' \code{\link{des_opt}}, \code{\link{opchar}}, \code{\link{sim}},
-#' \code{\link{plot.OptGS_des}}, \code{\link{plot.OptGS_opchar}},
-#' \code{\link{print.OptGS_des}}, \code{\link{summary.OptGS_des}}.
+#' des_3 <- build(e = c(2.85, 2.01, 1.65), f = c(-0.18, 0.94, 1.65), n0 = 115)
+#' @seealso \code{\link{des_gs}}, \code{\link{des_nearopt}},
+#' \code{\link{des_opt}}, \code{\link{est}}, \code{\link{sim}},
+#' \code{\link{plot.OptGS_des}}, \code{\link{print.OptGS_des}},
+#' \code{\link{summary.OptGS_des}}
 #' @export
 build <- function(alpha = 0.05, beta = 0.2, delta = 0.2, e = c(1.88, 1.77),
                   f = c(0.63, 1.77), n0 = 180, n1 = n0, sigma0 = 1,
-                  sigma1 = sigma0, summary = F) {
+                  sigma1 = sigma0, summary = FALSE) {
 
   ##### Check input variables ##################################################
 
   check_real_range_strict( alpha,  "alpha", c(0,   1), 1)
   check_real_range_strict(  beta,   "beta", c(0,   1), 1)
   check_real_range_strict( delta,  "delta", c(0, Inf), 1)
-  #check_ef(e, f)
+  check_ef(e, f)
   check_real_range_strict(    n0,     "n0", c(0, Inf), 1)
   check_real_range_strict(    n1,     "n1", c(0, Inf), 1)
   check_real_range_strict(sigma0, "sigma0", c(0, Inf), 1)
   check_real_range_strict(sigma1, "sigma1", c(0, Inf), 1)
-  check_real_range_strict( ratio,  "ratio", c(0, Inf), 1)
   check_logical(summary, "summary")
 
   ##### Print summary ##########################################################
@@ -103,28 +102,29 @@ build <- function(alpha = 0.05, beta = 0.2, delta = 0.2, e = c(1.88, 1.77),
 
   ##### Perform main computations ##############################################
 
-  J          <- length(e)
+  J             <- length(e)
   if (n0%%1 == 0) {
-    n0       <- as.integer(n0)
+    n0          <- as.integer(n0)
   }
   if (n1%%1 == 0) {
-    n1       <- as.integer(n1)
+    n1          <- as.integer(n1)
   }
-  n          <- (n0 + n1)*(1:J)
-  ratio      <- n1/n0
-  CovZ       <- covariance(sqrt(1:J))
-  sqrt_I     <- sqrt(I <- information(n0, J, sigma0, sigma1, ratio))
-  argmax_ess <- stats::optim(par    = 0.5*delta,
-                             fn     = minus_ess,
-                             method = "Brent",
-                             lower  = 0,
-                             upper  = delta,
-                             e      = e,
-                             f      = f,
-                             sqrt_I = sqrt_I,
-                             CovZ   = CovZ,
-                             n      = n)$par
-  opchar     <- opchar_int(sort(c(0, argmax_ess, delta)), e, f, sqrt_I, CovZ, n)
+  n             <- (n0 + n1)*(1:J)
+  ratio         <- n1/n0
+  CovZ          <- covariance(sqrt(1:J))
+  sqrt_I        <- sqrt(I <- information(n0, J, sigma0, sigma1, ratio))
+  argmax_ess    <- stats::optim(par    = 0.5*delta,
+                                fn     = minus_ess,
+                                method = "Brent",
+                                lower  = 0,
+                                upper  = delta,
+                                e      = e,
+                                f      = f,
+                                sqrt_I = sqrt_I,
+                                CovZ   = CovZ,
+                                n      = n)$par
+  opchar        <- opchar_int(sort(c(0, argmax_ess, delta)), e, f, sqrt_I, CovZ,
+                              n)
 
   ##### Output results #########################################################
 

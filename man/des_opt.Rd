@@ -5,10 +5,24 @@
 \title{Design an optimal group-sequential clinical trial for a normally distributed
 primary outcome}
 \usage{
-des_opt(J = 2, alpha = 0.05, beta = 0.2, delta = 0.2, sigma0 = 1,
-  sigma1 = sigma0, ratio = 1, w = c(1, 0, 0, 0), quantile_sub = F,
-  integer_n = T, parallel = 1, popSize = 50, maxiter = 100,
-  run = maxiter, seed = Sys.time(), summary = F)
+des_opt(
+  J = 2,
+  alpha = 0.05,
+  beta = 0.2,
+  delta = 0.2,
+  sigma0 = 1,
+  sigma1 = sigma0,
+  ratio = 1,
+  w = c(1, 0, 0, 0),
+  quantile_sub = FALSE,
+  integer_n = TRUE,
+  parallel = 1,
+  popSize = 50,
+  maxiter = 100,
+  run = maxiter,
+  seed = Sys.time(),
+  summary = FALSE
+)
 }
 \arguments{
 \item{J}{A \code{\link{numeric}} indicating the chosen value for
@@ -45,18 +59,18 @@ Defaults to \code{1}.}
 \item{w}{A \code{\link{numeric}} \code{\link{vector}} of length 4 indicating
 the weights to use in the optimality criteria. All elements must be greater
 than or equal to 0, and at least one of the first 3 elements must be strictly
-positive. See the vignette for further details. Defaults to
+positive. See wason (2015) for further details. Defaults to
 \code{c(1, 0, 0, 0)}.}
 
 \item{quantile_sub}{A \code{\link{logical}} variable indicating whether
 quantile substitution should be applied to the identified stopping
-boundaries. Defaults to \code{F}.}
+boundaries. Defaults to \code{FALSE}.}
 
 \item{integer_n}{A \code{\link{logical}} variable indicating whether the
 computed values for \ifelse{html}{\out{<i>n</i><sub>0</sub>}}{\eqn{n_0}} and
 \ifelse{html}{\out{<i>n</i><sub>1</sub>}}{\eqn{n_1}}, the group sizes in the
 control and experimental arms, should be forced to be whole numbers. Defaults
-to \code{T}.}
+to \code{TRUE}.}
 
 \item{parallel}{See \code{\link[GA]{ga}}.}
 
@@ -71,13 +85,13 @@ calculations reproducible.}
 
 \item{summary}{A \code{\link{logical}} variable indicating whether a summary
 of the function's progress should be printed to the console. Defaults to
-\code{F}.}
+\code{FALSE}.}
 }
 \value{
 A \code{\link{list}} with additional class \code{"OptGS_des"}. It
 will contain each of the input variables (subject to internal modification),
-relating to the various design functions from \code{\link[OptGS]{OptGS}},
-along with the following elements:
+relating them to the outputs of the various group-sequential design functions
+in \code{\link{OptGS}}, along with additional elements including:
 \itemize{
 \item \code{CovZ}: A \code{\link{numeric}} \code{\link{matrix}} giving
 \ifelse{html}{\out{Cov(<b><i>Z</i></b>)}}{\eqn{Cov(\bold{Z})}}, the
@@ -98,6 +112,8 @@ information levels for the identified design.
 \item \code{n}: A \code{\link{numeric}} \code{\link{vector}} giving
 \ifelse{html}{\out{<b><i>n</i></b>}}{\eqn{\bold{n}}}, the vector of
 stage-wise sample sizes for the identified design.
+\item \code{n_fixed}: A \code{\link{numeric}} giving the sample size required
+by a corresponding fixed-sample design.
 \item \code{n0}: A \code{\link{numeric}} giving
 \ifelse{html}{\out{<i>n</i><sub>0</sub>}}{\eqn{n_0}}, the group size in the
 control arm for the identified design.
@@ -121,7 +137,7 @@ assuming the primary outcome variable is normally distributed, using the
 approach proposed in Wason \emph{et al} (2012).
 }
 \examples{
-# The optimal design for the default parameters
+# The optimal group-sequential design for the default parameters
 des     <- des_opt()
 # A three-stage optimal design
 des_3   <- des_opt(J = 3)
@@ -129,8 +145,8 @@ des_3   <- des_opt(J = 3)
 des_alt <- des_opt(w = c(0, 1, 0, 0))
 }
 \seealso{
-\code{\link{an}}, \code{\link{build}}, \code{\link{des_gs}},
-\code{\link{des_nearopt}}, \code{\link{opchar}}, \code{\link{sim}},
-\code{\link{plot.OptGS_des}}, \code{\link{plot.OptGS_opchar}},
-\code{\link{print.OptGS_des}}, \code{\link{summary.OptGS_des}}.
+\code{\link{build}}, \code{\link{des_nearopt}},
+\code{\link{des_opt}}, \code{\link{est}}, \code{\link{opchar}},
+\code{\link{sim}}, \code{\link{plot.OptGS_des}},
+\code{\link{print.OptGS_des}}, \code{\link{summary.OptGS_des}}
 }

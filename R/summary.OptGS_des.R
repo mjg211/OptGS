@@ -22,7 +22,7 @@ summary.OptGS_des <- function(object, ...) {
 
   ##### Check input variables ##################################################
 
-  #check_OptGS_des(object, "object")
+  check_OptGS_des(object, "object")
   x <- object
 
   ##### Print summary ##########################################################

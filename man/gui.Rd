@@ -2,15 +2,15 @@
 % Please edit documentation in R/gui.R
 \name{gui}
 \alias{gui}
-\title{Graphical user interface to optimal group sequential trial design
-determination}
+\title{Graphical user interface to group sequential trial design and analysis}
 \usage{
 gui()
 }
 \description{
 \code{gui()} run an R Shiny web browser based graphical user interface for
-running the functions \code{\link{des_gs}}, \code{\link{des_nearopt}},
-\code{\link{opchar}}, and \code{\link{plot.des_OptGS}}.
+running the functions \code{\link{des_fixed}}, \code{\link{des_gs}},
+\code{\link{des_nearopt}}, \code{\link{est}}, \code{\link{opchar}},
+\code{\link{plot.OptGS_des}}, and \code{\link{plot.OptGS_opchar}}.
 }
 \examples{
 # Launch the GUI
@@ -19,6 +19,7 @@ gui()
 }
 }
 \seealso{
-\code{\link{des_gs}}, \code{\link{des_nearopt}},
-\code{\link{opchar}}, \code{\link{plot.des_OptGS}}.
+\code{\link{des_fixed}}, \code{\link{des_gs}},
+\code{\link{des_nearopt}}, \code{\link{est}}, \code{\link{opchar}},
+\code{\link{plot.OptGS_des}}, \code{\link{plot.OptGS_opchar}}
 }

@@ -12,6 +12,6 @@ citEntry(entry       = "Article",
          doi         = "10.18637/jss.v066.i02",
          url         = "https://doi.org/10.18637/jss.v066.i02",
          textVersion = paste("Wason JMS (2015) OptGS: An R package for finding",
-                             "near-optimal group-sequential designs. Journal ",
+                             "near-optimal group-sequential designs. Journal",
                              "of Statistical Software 66(2):1-13.")
 )

@@ -32,7 +32,7 @@ plot.OptGS_des <- function(x, ..., output = F) {
 
   ##### Input Checking #########################################################
 
-  #check_OptGS_des(des, "x")
+  check_OptGS_des(x, "x")
   check_logical(output, "output")
 
   ##### Main Computations ######################################################
@@ -44,7 +44,7 @@ plot.OptGS_des <- function(x, ..., output = F) {
                                                             "Futility"),
                                                           each = des$J),
                                 `Stopping boundary` = c(des$e, des$f))
-  plots$J <- ggplot2::ggplot(boundaries,
+  plots$J     <- ggplot2::ggplot(boundaries,
                                  ggplot2::aes(x = Stage,
                                               y = `Stopping boundary`,
                                               colour = Type,
@@ -59,7 +59,7 @@ plot.OptGS_des <- function(x, ..., output = F) {
                    legend.title = ggplot2::element_blank())
   print(plots$J)
 
-  plots$n <- ggplot2::ggplot(boundaries,
+  plots$n     <- ggplot2::ggplot(boundaries,
                                  ggplot2::aes(x = `Sample size`,
                                               y = `Stopping boundary`,
                                               colour = Type,

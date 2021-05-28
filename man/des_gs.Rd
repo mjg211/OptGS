@@ -5,9 +5,20 @@
 \title{Design a group-sequential clinical trial for a normally distributed primary
 outcome}
 \usage{
-des_gs(J = 2, alpha = 0.05, beta = 0.2, delta = 0.2, sigma0 = 1,
-  sigma1 = sigma0, ratio = 1, shape = "power_family", Delta = 0,
-  quantile_sub = F, integer_n = T, summary = F)
+des_gs(
+  J = 2,
+  alpha = 0.05,
+  beta = 0.2,
+  delta = 0.2,
+  sigma0 = 1,
+  sigma1 = sigma0,
+  ratio = 1,
+  shape = "power_family",
+  Delta = 0,
+  quantile_sub = FALSE,
+  integer_n = TRUE,
+  summary = FALSE
+)
 }
 \arguments{
 \item{J}{A \code{\link{numeric}} indicating the chosen value for
@@ -43,8 +54,9 @@ Defaults to \code{1}.}
 
 \item{shape}{A \code{\link{character}} string indicating the chosen
 stopping boundary shape. Must be one of \code{"haybittle_peto"},
-\code{"power_family"}, \code{"triangular"}, or \code{"wang_tsiatis"}.
-Defaults to \code{"power_family"}.}
+\code{"obrien_fleming"}, \code{"pocock"}, \code{"power_family"},
+\code{"triangular"}, or \code{"wang_tsiatis"}. Defaults to
+\code{"power_family"}.}
 
 \item{Delta}{Only used if \code{shape} is equal to \code{"power_family"} or
 \code{"wang_tsiatis"}. Then, it is a \code{\link{numeric}} (potentially a
@@ -56,23 +68,23 @@ be a \code{\link{numeric}} \code{\link{vector}} of length 1 or 2. Defaults to
 
 \item{quantile_sub}{A \code{\link{logical}} variable indicating whether
 quantile substitution should be applied to the identified stopping
-boundaries. Defaults to \code{F}.}
+boundaries. Defaults to \code{FALSE}.}
 
 \item{integer_n}{A \code{\link{logical}} variable indicating whether the
 computed values for \ifelse{html}{\out{<i>n</i><sub>0</sub>}}{\eqn{n_0}} and
 \ifelse{html}{\out{<i>n</i><sub>1</sub>}}{\eqn{n_1}}, the group sizes in the
 control and experimental arms, should be forced to be whole numbers. Defaults
-to \code{T}.}
+to \code{TRUE}.}
 
 \item{summary}{A \code{\link{logical}} variable indicating whether a summary
 of the function's progress should be printed to the console. Defaults to
-\code{F}.}
+\code{FALSE}.}
 }
 \value{
 A \code{\link{list}} with additional class \code{"OptGS_des"}. It
 will contain each of the input variables (subject to internal modification),
-relating to the various design functions from \code{\link[OptGS]{OptGS}},
-along with the following elements:
+relating them to the outputs of the various group-sequential design functions
+in \code{\link{OptGS}}, along with additional elements including:
 \itemize{
 \item \code{CovZ}: A \code{\link{numeric}} \code{\link{matrix}} giving
 \ifelse{html}{\out{Cov(<b><i>Z</i></b>)}}{\eqn{Cov(\bold{Z})}}, the
@@ -90,6 +102,8 @@ information levels for the identified design.
 \item \code{n}: A \code{\link{numeric}} \code{\link{vector}} giving
 \ifelse{html}{\out{<b><i>n</i></b>}}{\eqn{\bold{n}}}, the vector of
 stage-wise sample sizes for the identified design.
+\item \code{n_fixed}: A \code{\link{numeric}} giving the sample size required
+by a corresponding fixed-sample design.
 \item \code{n0}: A \code{\link{numeric}} giving
 \ifelse{html}{\out{<i>n</i><sub>0</sub>}}{\eqn{n_0}}, the group size in the
 control arm for the identified design.
@@ -111,10 +125,11 @@ argmax<sub>&theta;</sub><i>ESS</i>(<i>&theta;</i>)}}{
 \code{des_gs()} determines (non-optimised) group-sequential clinical trial
 designs assuming the primary outcome variable is normally distributed. It
 supports a variety of popular boundary shapes: Haybittle-Peto, power-family,
-triangular, and Wang-Tsiatis designs.
+triangular, and Wang-Tsiatis (which includes O'Brien-Fleming and Pocock)
+designs.
 }
 \examples{
-# The design for the default parameters
+# The group-sequential design for the default parameters
 des     <- des_gs()
 # A three-stage design
 des_3   <- des_gs(J = 3)
@@ -122,8 +137,8 @@ des_3   <- des_gs(J = 3)
 des_tri <- des_gs(shape = "triangular")
 }
 \seealso{
-\code{\link[OptGS]{an}}, \code{\link{build}}, \code{\link{des_nearopt}},
-\code{\link{des_opt}}, \code{\link{opchar}}, \code{\link{sim}},
-\code{\link{plot.OptGS_des}}, \code{\link{plot.OptGS_opchar}},
-\code{\link{print.OptGS_des}}, \code{\link{summary.OptGS_des}}.
+\code{\link{build}}, \code{\link{des_nearopt}},
+\code{\link{des_opt}}, \code{\link{est}}, \code{\link{opchar}},
+\code{\link{sim}}, \code{\link{plot.OptGS_des}},
+\code{\link{print.OptGS_des}}, \code{\link{summary.OptGS_des}}
 }

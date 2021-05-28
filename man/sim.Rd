@@ -5,39 +5,36 @@
 \title{Simulate group-sequential clinical trials for a normally distributed primary
 outcome}
 \usage{
-sim(des = des_gs(), tau = des$opchar$tau, adjusted = F,
-  alpha = des$alpha, replicates = 1e+05, summary = F)
+sim(
+  des = des_gs(),
+  tau = seq(-des$delta, 2 * des$delta, length.out = 100),
+  estimators = FALSE,
+  replicates = 1000,
+  summary = FALSE
+)
 }
 \arguments{
-\item{des}{An object of class OptGS_des, as returned by \code{\link{des_gs}},
-\code{\link{des_nearopt}}, \code{\link{des_opt}}, or \code{\link{build}}.
-Defaults to \code{des_gs()}.}
+\item{des}{An object of class \code{"OptGS_des"}, as returned by
+\code{\link{des_gs}}, \code{\link{des_nearopt}}, \code{\link{des_opt}}, or
+\code{\link{build}}. Defaults to \code{des_gs()}.}
 
 \item{tau}{A \code{\link{numeric}} \code{\link{vector}} indicating the values
 of \ifelse{html}{\out{<i>&tau;</i>}}{\eqn{\tau}} to perform simulations for.
 Defaults to \code{des$opchar$tau}.}
 
-\item{adjusted}{A \code{\link{logical}} variable indicating whether adjusted
-inference should also be carried out in the simulations. Defaults to
-\code{F}.}
-
-\item{alpha}{A \code{\link{numeric}} indicating the value of
-\ifelse{html}{\out{<i>&alpha;</i>}}{\eqn{\alpha}} to use in confidence
-interval construction. Defaults to \code{des$alpha}.}
-
 \item{replicates}{A \code{\link{numeric}} indicating the number of replicate
 simulations to use for each value of
 \ifelse{html}{\out{<i>&tau;</i>}}{\eqn{\tau}}. Must be a whole number.
-Defaults to \code{1e5}.}
+Defaults to \code{1000}.}
 
 \item{summary}{A \code{\link{logical}} variable indicating whether a summary
 of the function's progress should be printed to the console. Defaults to
-\code{F}.}
+\code{FALSE}.}
 }
 \value{
 A \code{\link{list}} with additional class \code{"OptGS_sim"}. It
 will contain each of the input variables (subject to internal modification),
-along with the following elements:
+along with the following element:
 \itemize{
 \item \code{sim}: A \code{\link{tibble}} giving the estimated operating
 characteristics.
@@ -46,18 +43,13 @@ characteristics.
 \description{
 \code{sim()} simulates group-sequential clinical trials in order to validate
 certain analytically determined operating characteristics (as returned by
-\code{\link{opchar}}) and also to evaluate additional characteristics
-relating to post-trial inference.
+\code{\link{opchar}}) .
 }
 \examples{
 # Simulations for the default parameters
 sim     <- sim()
-# Increasing the number of tau values
-sim_tau <- sim(tau = seq(-des$delta, 2*des$delta, length.out = 10))
 }
 \seealso{
-\code{\link{an}}, \code{\link{des_gs}}, \code{\link{des_nearopt}},
-\code{\link{des_opt}}, \code{\link{opchar}}, \code{\link{build}},
-\code{\link{plot.OptGS_des}}, \code{\link{plot.OptGS_opchar}},
-\code{\link{print.OptGS_des}}, \code{\link{summary.OptGS_des}}.
+\code{\link{build}}, \code{\link{des_gs}},
+\code{\link{des_nearopt}}, \code{\link{des_opt}}, \code{\link{opchar}}
 }

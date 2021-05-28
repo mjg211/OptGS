@@ -57,15 +57,14 @@ ui <- shinydashboard::dashboardPage(
           "design, analysis, and visualization of randomized two-arm ",
           "group-sequential clinical trials with continuous outcome variables.",
           " Specifically, support is provided to perform sample size ",
-          "calculations for each of the most popular applicable (non-optimal) ",
-          "designs, along with optimal and near-optimal designs. Additional ",
-          "functions allow point estimates, p-values, and confidence intervals",
-          " to be determined for possible results in these designs. Plotting ",
-          "functions also permit the informative depiction of several ",
+          "calculations for popular applicable (non-optimal) designs, along ",
+          "with optimal and near-optimal designs. An additional function ",
+          "allows point estimators to be evaluated for these designs. Plotting",
+          " functions also permit the informative depiction of several ",
           "important quantities."),
         p("At present, this GUI supports execution of certain commands for ",
-          "design determination and plot production. Additional functionality ",
-          "will be added over time."),
+          "design determination, point estimator evaluation, and plot ",
+          "production. Additional functionality will be added over time."),
         p("See the 'Design' tab on the sidebar for code execution, or the",
           "'About' tab for further information on the GUI.")
       ),
@@ -191,11 +190,13 @@ ui <- shinydashboard::dashboardPage(
             shiny::selectInput(
               inputId = "design_shape",
               label   = "Stopping boundary shape:",
-              choices = c("Haybittle-Peto" = "haybittle_peto",
-                          "Near-optimal"   = "near_optimal",
-                          "Power-family"   = "power_family",
-                          "Triangular"     = "triangular",
-                          "Wang-Tsiatis"   = "wang_tsiatis"),
+              choices = c("Haybittle-Peto"  = "haybittle_peto",
+                          "Near-optimal"    = "near_optimal",
+                          "O'Brien-Fleming" = "obrien_fleming",
+                          "Pocock"          = "pocock",
+                          "Power-family"    = "power_family",
+                          "Triangular"      = "triangular",
+                          "Wang-Tsiatis"    = "wang_tsiatis"),
               selected = "near_optimal"
             ) %>%
               shinyhelper::helper(
@@ -234,6 +235,7 @@ ui <- shinydashboard::dashboardPage(
                 size    = "m",
                 colour  = "black"
               ),
+            shiny::uiOutput("design_estimators"),
             shinyWidgets::prettySwitch(
               inputId = "design_plots",
               label   = "Produce plots",
@@ -380,6 +382,47 @@ ui <- shinydashboard::dashboardPage(
         ),
         shiny::fluidRow(
           shinydashboard::box(
+            title       = "Median sample size curve",
+            width       = 4,
+            solidHeader = T,
+            collapsible = T,
+            status      = "primary",
+            shinycssloaders::withSpinner(
+              shiny::plotOutput("design_mess"),
+              type  = 6,
+              color = "#3C8DBC",
+              size  = 1/3
+            )
+          ),
+          shinydashboard::box(
+            title       = "Modal sample size curve",
+            width       = 4,
+            solidHeader = T,
+            collapsible = T,
+            status      = "primary",
+            shinycssloaders::withSpinner(
+              shiny::plotOutput("design_moss"),
+              type  = 6,
+              color = "#3C8DBC",
+              size  = 1/3
+            )
+          ),
+          shinydashboard::box(
+            title       = "Standard deviation sample size curve",
+            width       = 4,
+            solidHeader = T,
+            collapsible = T,
+            status      = "primary",
+            shinycssloaders::withSpinner(
+              shiny::plotOutput("design_sdss"),
+              type  = 6,
+              color = "#3C8DBC",
+              size  = 1/3
+            )
+          ),
+        ),
+        shiny::fluidRow(
+          shinydashboard::box(
             title       = "Stopping probabilities: By stage and decision",
             width       = 6,
             solidHeader = T,
@@ -406,6 +449,88 @@ ui <- shinydashboard::dashboardPage(
             )
           )
         ),
+        shiny::fluidRow(
+          shinydashboard::box(
+            title       = "Estimator performance: Conitional Bias, Stage 1",
+            width       = 4,
+            solidHeader = T,
+            collapsible = T,
+            status      = "primary",
+            shinycssloaders::withSpinner(
+              shiny::plotOutput("design_cond_bias_1"),
+              type  = 6,
+              color = "#3C8DBC",
+              size  = 1/3
+            )
+          ),
+          shinydashboard::box(
+            title       = "Estimator performance: Conditional Bias, Stage 2",
+            width       = 4,
+            solidHeader = T,
+            collapsible = T,
+            status      = "primary",
+            shinycssloaders::withSpinner(
+              shiny::plotOutput("design_cond_bias_2"),
+              type  = 6,
+              color = "#3C8DBC",
+              size  = 1/3
+            )
+          ),
+          shinydashboard::box(
+            title       = "Estimator performance: Marginal Bias",
+            width       = 4,
+            solidHeader = T,
+            collapsible = T,
+            status      = "primary",
+            shinycssloaders::withSpinner(
+              shiny::plotOutput("design_marg_bias"),
+              type  = 6,
+              color = "#3C8DBC",
+              size  = 1/3
+            )
+          )
+        ),
+        shiny::fluidRow(
+          shinydashboard::box(
+            title       = "Estimator performance: Conitional RMSE, Stage 1",
+            width       = 4,
+            solidHeader = T,
+            collapsible = T,
+            status      = "primary",
+            shinycssloaders::withSpinner(
+              shiny::plotOutput("design_cond_rmse_1"),
+              type  = 6,
+              color = "#3C8DBC",
+              size  = 1/3
+            )
+          ),
+          shinydashboard::box(
+            title       = "Estimator performance: Conditional RMSE, Stage 2",
+            width       = 4,
+            solidHeader = T,
+            collapsible = T,
+            status      = "primary",
+            shinycssloaders::withSpinner(
+              shiny::plotOutput("design_cond_rmse_2"),
+              type  = 6,
+              color = "#3C8DBC",
+              size  = 1/3
+            )
+          ),
+          shinydashboard::box(
+            title       = "Estimator performance: Marginal RMSE",
+            width       = 4,
+            solidHeader = T,
+            collapsible = T,
+            status      = "primary",
+            shinycssloaders::withSpinner(
+              shiny::plotOutput("design_marg_rmse"),
+              type  = 6,
+              color = "#3C8DBC",
+              size  = 1/3
+            )
+          )
+        ),
         ##### Row 8: Session information #######################################
         shiny::fluidRow(
           shinydashboard::box(
@@ -424,7 +549,7 @@ ui <- shinydashboard::dashboardPage(
         tabName = "about",
         h1("About"),
         p("This graphical user interface (GUI) is built upon (and in to)",
-          "v.2.0.0 of the R package OptGS, written by James Wason and Michael",
+          "v.2.2.0 of the R package OptGS, written by James Wason and Michael",
           "Grayling (Newcastle University)."),
         p("The first-line response to a possible bug should be to submit it as",
           "a 'New issue' at:"),
@@ -440,12 +565,7 @@ ui <- shinydashboard::dashboardPage(
         p("If you use OptGS, please cite it with:"),
         p("Wason JMS (2015) OptGS: An R package for finding near-optimal",
           "group-sequential designs.", em("J Stat Soft"),
-          HTML("<b>66</b>(2)<b>:</b>1-13."), "DOI: 10.18637/jss.v066.i02."),
-        p(),
-        p("A selection of references related to the methodology used in",
-          "OptGS are given below."),
-        h4("References")
-
+          HTML("<b>66</b>(2)<b>:</b>1-13."), "DOI: 10.18637/jss.v066.i02.")
       )
     )
   ),
@@ -577,8 +697,9 @@ server <- function(input, output, session) {
   })
 
   output$design_warning <- renderUI({
-    if (all(input$design_J %in% c(4, 5),
-            input$design_shape == "near_optimal")) {
+    if (any(all(input$design_J %in% c(4, 5),
+                input$design_shape == "near_optimal"),
+            input$design_estimators)) {
       shiny::p(shiny::strong("WARNING:"), " Execution time may be long for ",
                "chosen input parameters.")
     }
@@ -597,6 +718,25 @@ server <- function(input, output, session) {
           type    = "markdown",
           title   = "",
           content = "design_density",
+          size    = "m",
+          colour  = "black"
+        )
+    }
+  })
+
+  output$design_estimators <- renderUI({
+    if (input$design_J == 2) {
+      shinyWidgets::prettySwitch(
+        inputId = "design_estimators",
+        label   = "Evaluate estimator performance",
+        status  = "info",
+        value   = F,
+        slim    = T
+      ) %>%
+        shinyhelper::helper(
+          type    = "markdown",
+          title   = "",
+          content = "design_estimators",
           size    = "m",
           colour  = "black"
         )
@@ -657,7 +797,7 @@ server <- function(input, output, session) {
                            integer_n    = input$design_integer_n)
     }
     design$opchar_og <- design$opchar
-    progress$inc(amount  = 0.25,
+    progress$inc(amount  = 0.2,
                  message = "Rendering design summary")
     rmarkdown::render(
       input         = "design_summary.Rmd",
@@ -679,7 +819,8 @@ server <- function(input, output, session) {
                            e            = design$e,
                            f            = design$f,
                            opchar       = design$opchar,
-                           plots        = input$design_plots)
+                           plots        = input$design_plots,
+                           estimators   = input$design_estimators)
     )
     xml2::write_html(
       rvest::html_node(
@@ -690,10 +831,12 @@ server <- function(input, output, session) {
       ),
       file = paste0(tempdir(), "/design_summary_modified.html")
     )
-    progress$inc(amount  = 0.25,
+    progress$inc(amount  = 0.2,
                  message = "Rendering plots")
     design$boundaries       <- plot(design, output = T)$plots$J
     if (input$design_plots) {
+      progress$inc(amount  = 0.2,
+                   message = "Evaluating operating characteristics")
       opchar                <-
         OptGS::opchar(design,
                       tau = seq(-input$design_delta, 2*input$design_delta,
@@ -701,12 +844,13 @@ server <- function(input, output, session) {
       design$opchar         <- rbind(design$opchar, opchar$opchar)
       plots                 <- plot(opchar, output = T)
       design$ess            <- plots$plots$`ESS(tau)`
-      design$median         <- plots$plots$`MSS(tau)`
+      design$mess           <- plots$plots$`MeSS(tau)`
+      design$moss           <- plots$plots$`MoSS(tau)`
+      design$sdss           <- plots$plots$`SDSS(tau)`
       design$power          <- plots$plots$`P(tau)`
       design$stopping_1     <- plots$plots$rejection
       design$stopping_2     <- plots$plots$stopping
-      progress$inc(amount  = 0.25,
-                   message = "Rendering plots")
+      design$opchar         <- as.data.frame(design$opchar)
       row.names(design$opchar) <-
                  c("<i>H</i><sub>0</sub>",
                    "argmax<sub><i>&tau;</i></sub><i>ESS</i>(<i>&tau;</i>)",
@@ -715,6 +859,7 @@ server <- function(input, output, session) {
     } else {
       design$ess            <- design$median     <- design$power      <-
                                design$stopping_1 <- design$stopping_2 <- NULL
+      design$opchar         <- as.data.frame(design$opchar)
       row.names(design$opchar) <-
         c("<i>H</i><sub>0</sub>",
           "argmax<sub><i>&tau;</i></sub><i>ESS</i>(<i>&tau;</i>)",
@@ -730,7 +875,24 @@ server <- function(input, output, session) {
         paste0("<i>S</i><sub>", seq_J, "</sub>(<i>&tau;</i>)"),
         paste0("cum{<i>S</i><sub>", seq_J, "</sub>(<i>&tau;</i>)}"),
         "max <i>n</i>")
-    progress$inc(amount  = 0.25,
+    if (all(input$design_estimators, input$design_J == 2)) {
+      progress$inc(amount  = 0.2,
+                   message = "Evaluating point estimators")
+      design$est            <-
+        est(design, tau = seq(-input$design_delta, 2*input$design_delta,
+                              length.out = as.numeric(input$design_density)))
+      plots                 <- plot(design$est, output = T)
+      design$cond_bias_1    <- plots$plots$`Bias(hat(tau)|tau,1)`
+      design$cond_bias_2    <- plots$plots$`Bias(hat(tau)|tau,2)`
+      design$marg_bias      <- plots$plots$`Bias(hat(tau)|tau)`
+      design$cond_rmse_1    <- plots$plots$`RMSE(hat(tau)|tau,1)`
+      design$cond_rmse_2    <- plots$plots$`RMSE(hat(tau)|tau,2)`
+      design$marg_rmse      <- plots$plots$`RMSE(hat(tau)|tau)`
+    } else {
+      design$cond_bias_1    <- design$cond_bias_2 <- design$marg_bias <-
+        design$cond_rmse_1    <- design$cond_rmse_2 <- design$marg_rmse <- NULL
+    }
+    progress$inc(amount  = 0.2,
                  message = "Outputting results")
     design
   })
@@ -818,10 +980,24 @@ server <- function(input, output, session) {
     }
   })
 
-  output$design_median <- shiny::renderPlot({
+  output$design_mess <- shiny::renderPlot({
     input$design_update
     if (shiny::isolate(input$design_plots)) {
-      des()$median
+      des()$mess
+    }
+  })
+
+  output$design_moss <- shiny::renderPlot({
+    input$design_update
+    if (shiny::isolate(input$design_plots)) {
+      des()$moss
+    }
+  })
+
+  output$design_sdss <- shiny::renderPlot({
+    input$design_update
+    if (shiny::isolate(input$design_plots)) {
+      des()$sdss
     }
   })
 
@@ -843,6 +1019,48 @@ server <- function(input, output, session) {
     input$design_update
     if (shiny::isolate(input$design_plots)) {
       des()$stopping_2
+    }
+  })
+
+  output$design_cond_bias_1 <- shiny::renderPlot({
+    input$design_update
+    if (shiny::isolate(input$design_plots)) {
+      des()$cond_bias_1
+    }
+  })
+
+  output$design_cond_bias_2 <- shiny::renderPlot({
+    input$design_update
+    if (shiny::isolate(input$design_plots)) {
+      des()$cond_bias_2
+    }
+  })
+
+  output$design_marg_bias <- shiny::renderPlot({
+    input$design_update
+    if (shiny::isolate(input$design_plots)) {
+      des()$marg_bias
+    }
+  })
+
+  output$design_cond_rmse_1 <- shiny::renderPlot({
+    input$design_update
+    if (shiny::isolate(input$design_plots)) {
+      des()$cond_rmse_1
+    }
+  })
+
+  output$design_cond_rmse_2 <- shiny::renderPlot({
+    input$design_update
+    if (shiny::isolate(input$design_plots)) {
+      des()$cond_rmse_2
+    }
+  })
+
+  output$design_marg_rmse <- shiny::renderPlot({
+    input$design_update
+    if (shiny::isolate(input$design_plots)) {
+      des()$marg_rmse
     }
   })
 
@@ -873,6 +1091,7 @@ server <- function(input, output, session) {
                          quantile_sub = des()$quantile_sub,
                          integer_n    = des()$integer_n,
                          plots        = input$design_plots,
+                         estimators   = input$design_estimators,
                          n0           = des()$n0,
                          n1           = des()$n1,
                          opchar       = des()$opchar_og,
@@ -881,9 +1100,17 @@ server <- function(input, output, session) {
                          boundaries   = des()$boundaries,
                          power        = des()$power,
                          ess          = des()$ess,
-                         median       = des()$median,
+                         mess         = des()$mess,
+                         moss         = des()$moss,
+                         sdss         = des()$sdss,
                          stopping_1   = des()$stopping_1,
-                         stopping_2   = des()$stopping_2)
+                         stopping_2   = des()$stopping_2,
+                         cond_bias_1  = des()$cond_bias_1,
+                         cond_bias_2  = des()$cond_bias_2,
+                         marg_bias    = des()$marg_bias,
+                         cond_rmse_1  = des()$cond_rmse_1,
+                         cond_rmse_2  = des()$cond_rmse_2,
+                         marg_rmse    = des()$marg_rmse)
       if (input$design_format == "pdf") {
         format   <- "pdf_document"
       } else if (input$design_format == "html") {

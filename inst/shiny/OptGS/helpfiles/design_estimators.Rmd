@@ -1,0 +1,8 @@
+---
+title: "design_estimators"
+output: md_document
+---
+
+# Plot estimator performance
+
+__OptGS__ can, for two-stage designs, produce a selection of plots categorising the bias and residual mean square error of several possible estimators of the treatment effects. Specify your choice on whether to produce these plots for the identified design here.

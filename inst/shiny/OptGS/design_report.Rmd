@@ -20,12 +20,21 @@ params:
   f:            NA
   opchar:       NA
   plots:        NA
+  estimators:   NA
   boundaries:   NA
   ess:          NA
-  median:       NA
+  mess:         NA
+  moss:         NA
+  sdss:         NA
   power:        NA
   stopping_1:   NA
   stopping_2:   NA
+  cond_bias_1:  NA
+  cond_bias_2:  NA
+  marg_bias:    NA
+  cond_rmse_1:  NA
+  cond_rmse_2:  NA
+  marg_rmse:    NA
 ---
 
 ```{r, include = F}
@@ -81,7 +90,11 @@ if (shape == "haybittle_peto") {
   shape_text        <- "Triangular-test"
 } else if (shape == "wang_tsiatis") {
   shape_text        <- "Wang-Tsiatis"
-}
+} else if (shape == "obrien_fleming") {
+  shape_text        <- "O'Brien-Fleming"
+} else if (shape == "pocock") {
+  shape_text        <- "Pocock"
+} 
 
 if (shape == "near_optimal") {
   if (optimality == "null_optimal") {
@@ -149,26 +162,58 @@ f_text <- paste0("(", paste(round(f, 3), collapse = ", "), ")")
 - The following futility boundaries should be used: $\boldsymbol{`r f_text`}$.
 
 ```{r, echo = F, results = "asis"}
+
 library(knitr)
-kable(params$opchar[1:3, ])
+min_col   <- 2
+max_col   <- 5
+tables    <- list()
+while (max_col < ncol(params$opchar)) {
+  print(kable(params$opchar[1:3, c(1, min_col:max_col)]))
+  cat("\n \n \n \n \n \n")
+  min_col <- max_col + 1
+  max_col <- max_col + 5
+}
+print(kable(params$opchar[1:3, c(1, min_col:min(ncol(params$opchar),
+                                                max_col))]))
 ```
 
 # Plots
 
 ```{r, echo = F, results = "asis", dpi = 600}
 print(params$boundaries)
-  cat("\n \n \n \n \n \n")
+cat("\n \n \n \n \n \n")
 if (params$plots) {
+  print(params$power)
+  cat("\n \n \n \n \n \n")
   print(params$ess)
   cat("\n \n \n \n \n \n")
-  print(params$median)
+  print(params$mess)
   cat("\n \n \n \n \n \n")
-  print(params$power)
+  print(params$moss)
+  cat("\n \n \n \n \n \n")
+  print(params$sdss)
   cat("\n \n \n \n \n \n")
   print(params$stopping_1)
   cat("\n \n \n \n \n \n")
   print(params$stopping_2)
 } else {
   cat("Remaining plots not chosen for output: select the box next to 'Produce plots' to add additional plots to the report.")
+}
+```
+
+```{r, echo = F, results = "asis", dpi = 600}
+cat("\n \n \n \n \n \n")
+if (all(params$estimators, params$J == 2)) {
+  print(params$cond_bias_1)
+  cat("\n \n \n \n \n \n")
+  print(params$cond_bias_2)
+  cat("\n \n \n \n \n \n")
+  print(params$marg_bias)
+  cat("\n \n \n \n \n \n")
+  print(params$cond_rmse_1)
+  cat("\n \n \n \n \n \n")
+  print(params$cond_rmse_2)
+  cat("\n \n \n \n \n \n")
+  print(params$marg_rmse)
 }
 ```

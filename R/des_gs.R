@@ -4,7 +4,8 @@
 #' \code{des_gs()} determines (non-optimised) group-sequential clinical trial
 #' designs assuming the primary outcome variable is normally distributed. It
 #' supports a variety of popular boundary shapes: Haybittle-Peto, power-family,
-#' triangular, and Wang-Tsiatis designs.
+#' triangular, and Wang-Tsiatis (which includes O'Brien-Fleming and Pocock)
+#' designs.
 #'
 #' @param J A \code{\link{numeric}} indicating the chosen value for
 #' \ifelse{html}{\out{<i>J</i>}}{\eqn{J}}, the maximal allowed number of stages.
@@ -32,8 +33,9 @@
 #' Defaults to \code{1}.
 #' @param shape A \code{\link{character}} string indicating the chosen
 #' stopping boundary shape. Must be one of \code{"haybittle_peto"},
-#' \code{"power_family"}, \code{"triangular"}, or \code{"wang_tsiatis"}.
-#' Defaults to \code{"power_family"}.
+#' \code{"obrien_fleming"}, \code{"pocock"}, \code{"power_family"},
+#' \code{"triangular"}, or \code{"wang_tsiatis"}. Defaults to
+#' \code{"power_family"}.
 #' @param Delta Only used if \code{shape} is equal to \code{"power_family"} or
 #' \code{"wang_tsiatis"}. Then, it is a \code{\link{numeric}} (potentially a
 #' \code{\link{numeric}} \code{\link{vector}}) indicating the boundary shape
@@ -43,19 +45,19 @@
 #' \code{0}.
 #' @param quantile_sub A \code{\link{logical}} variable indicating whether
 #' quantile substitution should be applied to the identified stopping
-#' boundaries. Defaults to \code{F}.
+#' boundaries. Defaults to \code{FALSE}.
 #' @param integer_n A \code{\link{logical}} variable indicating whether the
 #' computed values for \ifelse{html}{\out{<i>n</i><sub>0</sub>}}{\eqn{n_0}} and
 #' \ifelse{html}{\out{<i>n</i><sub>1</sub>}}{\eqn{n_1}}, the group sizes in the
 #' control and experimental arms, should be forced to be whole numbers. Defaults
-#' to \code{T}.
+#' to \code{TRUE}.
 #' @param summary A \code{\link{logical}} variable indicating whether a summary
 #' of the function's progress should be printed to the console. Defaults to
-#' \code{F}.
+#' \code{FALSE}.
 #' @return A \code{\link{list}} with additional class \code{"OptGS_des"}. It
 #' will contain each of the input variables (subject to internal modification),
-#' relating to the various design functions from \code{\link[OptGS]{OptGS}},
-#' along with the following elements:
+#' relating them to the outputs of the various group-sequential design functions
+#' in \code{\link{OptGS}}, along with additional elements including:
 #' \itemize{
 #' \item \code{CovZ}: A \code{\link{numeric}} \code{\link{matrix}} giving
 #' \ifelse{html}{\out{Cov(<b><i>Z</i></b>)}}{\eqn{Cov(\bold{Z})}}, the
@@ -73,6 +75,8 @@
 #' \item \code{n}: A \code{\link{numeric}} \code{\link{vector}} giving
 #' \ifelse{html}{\out{<b><i>n</i></b>}}{\eqn{\bold{n}}}, the vector of
 #' stage-wise sample sizes for the identified design.
+#' \item \code{n_fixed}: A \code{\link{numeric}} giving the sample size required
+#' by a corresponding fixed-sample design.
 #' \item \code{n0}: A \code{\link{numeric}} giving
 #' \ifelse{html}{\out{<i>n</i><sub>0</sub>}}{\eqn{n_0}}, the group size in the
 #' control arm for the identified design.
@@ -90,47 +94,49 @@
 #' \eqn{\tau = argmax_{\theta}ESS(\theta)}}.
 #' }
 #' @examples
-#' # The design for the default parameters
+#' # The group-sequential design for the default parameters
 #' des     <- des_gs()
 #' # A three-stage design
 #' des_3   <- des_gs(J = 3)
 #' # With triangular-test boundaries
 #' des_tri <- des_gs(shape = "triangular")
-#' @seealso \code{\link[OptGS]{an}}, \code{\link{build}}, \code{\link{des_nearopt}},
-#' \code{\link{des_opt}}, \code{\link{opchar}}, \code{\link{sim}},
-#' \code{\link{plot.OptGS_des}}, \code{\link{plot.OptGS_opchar}},
-#' \code{\link{print.OptGS_des}}, \code{\link{summary.OptGS_des}}.
+#' @seealso \code{\link{build}}, \code{\link{des_nearopt}},
+#' \code{\link{des_opt}}, \code{\link{est}}, \code{\link{opchar}},
+#' \code{\link{sim}}, \code{\link{plot.OptGS_des}},
+#' \code{\link{print.OptGS_des}}, \code{\link{summary.OptGS_des}}
 #' @export
 des_gs <- function(J = 2, alpha = 0.05, beta = 0.2, delta = 0.2, sigma0 = 1,
                    sigma1 = sigma0, ratio = 1, shape = "power_family",
-                   Delta = 0, quantile_sub = F, integer_n = T, summary = F) {
+                   Delta = 0, quantile_sub = FALSE, integer_n = TRUE,
+                   summary = FALSE) {
 
   ##### Check input variables ##################################################
 
-  J       <- check_integer_range(J, "J", c(1, Inf), 1)
+  J             <- check_integer_range(J, "J", c(1, Inf), 1)
   check_real_range_strict( alpha,  "alpha", c(0,   1), 1)
   check_real_range_strict(  beta,   "beta", c(0,   1), 1)
   check_real_range_strict( delta,  "delta", c(0, Inf), 1)
   check_real_range_strict(sigma0, "sigma0", c(0, Inf), 1)
   check_real_range_strict(sigma1, "sigma1", c(0, Inf), 1)
   check_real_range_strict( ratio,  "ratio", c(0, Inf), 1)
-  check_belong(shape, "shape", c("haybittle_peto", "power_family", "triangular",
-                                 "wang_tsiatis"), 1L)
-  Delta   <- check_Delta(Delta, shape)
+  check_belong(shape, "shape", c("haybittle_peto", "obrien_fleming", "pocock",
+                                 "power_family", "triangular", "wang_tsiatis"),
+               1L)
+  check_default(shape %in% c("haybittle_peto", "obrien_fleming", "pocock",
+                             "triangular"), "shape", Delta, "Delta", 0)
+  Delta         <- check_Delta(Delta, shape)
   check_logical(quantile_sub, "quantile_sub")
   check_logical(   integer_n,    "integer_n")
   check_logical(     summary,      "summary")
-  check_default(shape %in% c("haybittle_peto", "triangular"), "shape", Delta,
-                "Delta", 0)
   if (shape %in% c("haybittle_peto", "triangular")) {
-    Delta <- NA
+    Delta       <- NA
   }
 
   ##### Print summary ##########################################################
 
   if (summary) {
-    summary_des_gs(J, alpha, beta, delta, sigma0, sigma1, ratio, shape, Delta,
-                   quantile_sub, integer_n)
+    #summary_des_gs(J, alpha, beta, delta, sigma0, sigma1, ratio, shape, Delta,
+    #               quantile_sub, integer_n)
     message("")
   }
 
@@ -138,7 +144,8 @@ des_gs <- function(J = 2, alpha = 0.05, beta = 0.2, delta = 0.2, sigma0 = 1,
 
   seq_J         <- 1:J
   CovZ          <- covariance(sqrt(seq_J))
-  if (shape %in% c("haybittle_peto", "wang_tsiatis")) {
+  if (shape %in% c("haybittle_peto", "obrien_fleming", "pocock",
+                   "wang_tsiatis")) {
     C           <- stats::uniroot(f        = eval_C_hp_wt,
                                   interval = c(1e-16, 1e16),
                                   alpha    = alpha,
@@ -224,11 +231,18 @@ des_gs <- function(J = 2, alpha = 0.05, beta = 0.2, delta = 0.2, sigma0 = 1,
                                 n      = n)$par
   opchar        <- opchar_int(sort(c(0, argmax_ess, delta)), e, f, sqrt_I, CovZ,
                               n)
+  n_fixed       <- des_fixed(alpha = alpha, beta = beta, delta = delta,
+                             sigma0 = sigma0, sigma1 = sigma1, ratio = ratio,
+                             integer_n = integer_n)$n
 
   ##### Output results #########################################################
 
   if (shape == "haybittle_peto") {
     name        <- "Haybittle-Peto"
+  } else if (shape == "obrien_fleming") {
+    name        <- "O'Brien-Fleming"
+  } else if (shape == "pocock") {
+    name        <- "Pocock"
   } else if (shape == "power_family") {
     name        <- paste0("Power-family: Delta = (",
                           paste(Delta, collapse = ", "), ")")
@@ -250,6 +264,7 @@ des_gs <- function(J = 2, alpha = 0.05, beta = 0.2, delta = 0.2, sigma0 = 1,
                         J            = J,
                         method       = NA,
                         n            = n,
+                        n_fixed      = n_fixed,
                         n0           = n0,
                         n1           = n1,
                         name         = name,

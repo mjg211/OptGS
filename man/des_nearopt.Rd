@@ -5,10 +5,21 @@
 \title{Design a near-optimal group-sequential clinical trial for a normally
 distributed primary outcome}
 \usage{
-des_nearopt(J = 2, alpha = 0.05, beta = 0.2, delta = 0.2,
-  sigma0 = 1, sigma1 = sigma0, ratio = 1, Delta = c(0, 0),
-  w = c(1, 0, 0, 0), quantile_sub = F, integer_n = T,
-  method = "Nelder-Mead", summary = F)
+des_nearopt(
+  J = 2,
+  alpha = 0.05,
+  beta = 0.2,
+  delta = 0.2,
+  sigma0 = 1,
+  sigma1 = sigma0,
+  ratio = 1,
+  Delta = c(0, 0),
+  w = c(1, 0, 0, 0),
+  quantile_sub = FALSE,
+  integer_n = TRUE,
+  method = "Nelder-Mead",
+  summary = FALSE
+)
 }
 \arguments{
 \item{J}{A \code{\link{numeric}} indicating the chosen value for
@@ -50,18 +61,17 @@ search procedure. All elements must be less than or equal to 0.5. Defaults to
 \item{w}{A \code{\link{numeric}} \code{\link{vector}} of length 4 indicating
 the weights to use in the optimality criteria. All elements must be greater
 than or equal to 0, and at least one of the first 3 elements must be strictly
-positive. See the vignette for further details. Defaults to
-\code{c(1, 0, 0, 0)}.}
+positive. See Wason (2015). Defaults to \code{c(1, 0, 0, 0)}.}
 
 \item{quantile_sub}{A \code{\link{logical}} variable indicating whether
 quantile substitution should be applied to the identified stopping
-boundaries. Defaults to \code{F}.}
+boundaries. Defaults to \code{FALSE}.}
 
 \item{integer_n}{A \code{\link{logical}} variable indicating whether the
 computed values for \ifelse{html}{\out{<i>n</i><sub>0</sub>}}{\eqn{n_0}} and
 \ifelse{html}{\out{<i>n</i><sub>1</sub>}}{\eqn{n_1}}, the group sizes in the
 control and experimental arms, should be forced to be whole numbers. Defaults
-to \code{T}.}
+to \code{TRUE}.}
 
 \item{method}{A \code{\link{character}} string indicating the optimisation
 routine to use to identify the optimised boundary shape parameters. Must be
@@ -71,13 +81,13 @@ is slower than \code{"L-BFGS-B"}. Defaults to \code{"Nelder-Mead"}.}
 
 \item{summary}{A \code{\link{logical}} variable indicating whether a summary
 of the function's progress should be printed to the console. Defaults to
-\code{F}.}
+\code{FALSE}.}
 }
 \value{
 A \code{\link{list}} with additional class \code{"OptGS_des"}. It
 will contain each of the input variables (subject to internal modification),
-relating to the various design functions from \code{\link[OptGS]{OptGS}},
-along with the following elements:
+relating them to the outputs of the various group-sequential design functions
+in \code{\link{OptGS}}, along with additional elements including:
 \itemize{
 \item \code{CovZ}: A \code{\link{numeric}} \code{\link{matrix}} giving
 \ifelse{html}{\out{Cov(<b><i>Z</i></b>)}}{\eqn{Cov(\bold{Z})}}, the
@@ -95,6 +105,8 @@ information levels for the identified design.
 \item \code{n}: A \code{\link{numeric}} \code{\link{vector}} giving
 \ifelse{html}{\out{<b><i>n</i></b>}}{\eqn{\bold{n}}}, the vector of
 stage-wise sample sizes for the identified design.
+\item \code{n_fixed}: A \code{\link{numeric}} giving the sample size required
+by a corresponding fixed-sample design.
 \item \code{n0}: A \code{\link{numeric}} giving
 \ifelse{html}{\out{<i>n</i><sub>0</sub>}}{\eqn{n_0}}, the group size in the
 control arm for the identified design.
@@ -118,7 +130,7 @@ designs assuming the primary outcome variable is normally distributed, using
 the approach proposed in Wason (2015).
 }
 \examples{
-# The near-optimal design for the default parameters
+# The near-optimal group-sequential design for the default parameters
 des     <- des_nearopt()
 # A three-stage near-optimal design
 des_3   <- des_nearopt(J = 3)
@@ -126,8 +138,8 @@ des_3   <- des_nearopt(J = 3)
 des_alt <- des_nearopt(w = c(0, 1, 0, 0))
 }
 \seealso{
-\code{\link{an}}, \code{\link{build}}, \code{\link{des_gs}},
-\code{\link{des_opt}}, \code{\link{opchar}}, \code{\link{sim}},
-\code{\link{plot.OptGS_des}}, \code{\link{plot.OptGS_opchar}},
-\code{\link{print.OptGS_des}}, \code{\link{summary.OptGS_des}}.
+\code{\link{build}}, \code{\link{des_nearopt}},
+\code{\link{des_opt}}, \code{\link{est}}, \code{\link{opchar}},
+\code{\link{sim}}, \code{\link{plot.OptGS_des}},
+\code{\link{print.OptGS_des}}, \code{\link{summary.OptGS_des}}
 }

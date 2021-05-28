@@ -33,7 +33,7 @@ plot.OptGS_opchar <- function(x, ..., output = F) {
 
   ##### Input Checking #########################################################
 
-  #check_opchar(x, "x")
+  check_OptGS_opchar(x, "x")
   check_logical(output, "output")
 
   ##### Main Computations ######################################################
@@ -89,11 +89,7 @@ plot.OptGS_opchar <- function(x, ..., output = F) {
       ggplot2::geom_line(data = opchar$opchar,
                          ggplot2::aes(x = tau,
                                       y = `ESS(tau)`)) +
-      ggplot2::geom_ribbon(data = opchar$opchar,
-                           ggplot2::aes(x    = tau,
-                                        ymin = `ESS(tau)` - `SDSS(tau)`,
-                                        ymax = `ESS(tau)` + `SDSS(tau)`),
-                           fill = "grey", alpha = 0.4) +
+      ggplot2::geom_hline(yintercept = opchar$des$n_fixed, linetype = 2) +
       ggplot2::xlab(expression(tau)) +
       ggplot2::ylab(expression(paste(italic(ESS), "(",
                                      tau, ")", sep = ""))) +
@@ -146,9 +142,9 @@ plot.OptGS_opchar <- function(x, ..., output = F) {
                                   limits = c(min(opchar$tau),
                                              max(opchar$tau)))
 
-    plots$`MSS(tau)` <- ggplot2::ggplot()
+    plots$`MeSS(tau)`   <- ggplot2::ggplot()
     if (min(opchar$tau) < 0) {
-      plots$`MSS(tau)` <- plots$`MSS(tau)` +
+      plots$`MeSS(tau)` <- plots$`MeSS(tau)` +
         ggplot2::geom_rect(data  = red,
                            ggplot2::aes(xmin = start,
                                         xmax = end,
@@ -158,7 +154,7 @@ plot.OptGS_opchar <- function(x, ..., output = F) {
                            fill  = "firebrick2")
     }
     if (all(min(opchar$tau) <= opchar$des$delta, max(opchar$tau) >= 0)) {
-      plots$`MSS(tau)` <- plots$`MSS(tau)` +
+      plots$`MeSS(tau)` <- plots$`MeSS(tau)` +
         ggplot2::geom_rect(data  = amber,
                            ggplot2::aes(xmin = start,
                                         xmax = end,
@@ -168,7 +164,7 @@ plot.OptGS_opchar <- function(x, ..., output = F) {
                            fill  = "orange")
     }
     if (max(opchar$tau) > opchar$des$delta) {
-      plots$`MSS(tau)` <- plots$`MSS(tau)` +
+      plots$`MeSS(tau)` <- plots$`MeSS(tau)` +
         ggplot2::geom_rect(data  = green,
                            ggplot2::aes(xmin = start,
                                         xmax = end,
@@ -177,19 +173,63 @@ plot.OptGS_opchar <- function(x, ..., output = F) {
                            alpha = 0.1,
                            fill  = "green4")
     }
-    plots$`MSS(tau)` <- plots$`MSS(tau)` +
+    plots$`MeSS(tau)` <- plots$`MeSS(tau)` +
       ggplot2::geom_line(data = opchar$opchar,
                          ggplot2::aes(x = tau,
-                                      y = `MSS(tau)`)) +
+                                      y = `MeSS(tau)`)) +
+      ggplot2::geom_hline(yintercept = opchar$des$n_fixed, linetype = 2) +
       ggplot2::xlab(expression(tau)) +
-      ggplot2::ylab(expression(paste(italic(MSS), "(",
+      ggplot2::ylab(expression(paste(italic(MeSS), "(",
                                      tau, ")",
                                      sep = ""))) +
       ggplot2::theme_bw() +
       ggplot2::scale_x_continuous(expand = c(0, 0),
                                   limits = c(min(opchar$tau),
                                              max(opchar$tau)))
-
+    plots$`MoSS(tau)`   <- ggplot2::ggplot()
+    if (min(opchar$tau) < 0) {
+      plots$`MoSS(tau)` <- plots$`MoSS(tau)` +
+        ggplot2::geom_rect(data  = red,
+                           ggplot2::aes(xmin = start,
+                                        xmax = end,
+                                        ymin = -Inf,
+                                        ymax = Inf),
+                           alpha = 0.1,
+                           fill  = "firebrick2")
+    }
+    if (all(min(opchar$tau) <= opchar$des$delta, max(opchar$tau) >= 0)) {
+      plots$`MoSS(tau)` <- plots$`MoSS(tau)` +
+        ggplot2::geom_rect(data  = amber,
+                           ggplot2::aes(xmin = start,
+                                        xmax = end,
+                                        ymin = -Inf,
+                                        ymax = Inf),
+                           alpha = 0.1,
+                           fill  = "orange")
+    }
+    if (max(opchar$tau) > opchar$des$delta) {
+      plots$`MoSS(tau)` <- plots$`MoSS(tau)` +
+        ggplot2::geom_rect(data  = green,
+                           ggplot2::aes(xmin = start,
+                                        xmax = end,
+                                        ymin = -Inf,
+                                        ymax = Inf),
+                           alpha = 0.1,
+                           fill  = "green4")
+    }
+    plots$`MoSS(tau)` <- plots$`MoSS(tau)` +
+      ggplot2::geom_line(data = opchar$opchar,
+                         ggplot2::aes(x = tau,
+                                      y = `MoSS(tau)`)) +
+      ggplot2::geom_hline(yintercept = opchar$des$n_fixed, linetype = 2) +
+      ggplot2::xlab(expression(tau)) +
+      ggplot2::ylab(expression(paste(italic(MoSS), "(",
+                                     tau, ")",
+                                     sep = ""))) +
+      ggplot2::theme_bw() +
+      ggplot2::scale_x_continuous(expand = c(0, 0),
+                                  limits = c(min(opchar$tau),
+                                             max(opchar$tau)))
     plots$`P(tau)` <- ggplot2::ggplot()
     if (min(opchar$tau) < 0) {
       plots$`P(tau)` <- plots$`P(tau)` +
@@ -238,11 +278,11 @@ plot.OptGS_opchar <- function(x, ..., output = F) {
                                              max(opchar$tau)))
     print(plots$`P(tau)`)
   } else {
-    plots$`ESS(tau)` <- plots$`SDSS(tau)` <- plots$`MSS(tau)` <-
-                        plots$`P(tau)`    <- NULL
+    plots$`ESS(tau)` <- plots$`SDSS(tau)` <- plots$`MeSS(tau)` <-
+                        plots$`MoSS(tau)` <- plots$`P(tau)`    <- NULL
   }
   int_tibble            <- tidyr::gather(opchar$opchar, "key", "value",
-                                         6:(5 + 2*opchar$des$J))
+                                         7:(6 + 2*opchar$des$J))
   int_tibble            <-
     dplyr::mutate(int_tibble,
                   key2 = rep(paste0(rep(c(paste0(expression(italic(E)), "["),
@@ -266,8 +306,8 @@ plot.OptGS_opchar <- function(x, ..., output = F) {
     ggplot2::scale_y_continuous(expand = c(0, 0))
 
   int_tibble            <- tidyr::gather(opchar$opchar, "key", "value",
-                                         (6 + 2*opchar$des$J):
-                                           (5 + 3*opchar$des$J))
+                                         (7 + 2*opchar$des$J):
+                                           (6 + 3*opchar$des$J))
   int_tibble            <-
     dplyr::mutate(int_tibble,
                   key2 = rep(paste0(rep(paste0(expression(italic(S)), "["),
