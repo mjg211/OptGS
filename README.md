@@ -4,14 +4,13 @@
 # OptGS
 
 *Optimal and near-optimal group-sequential designs for clinical trials
-with continuous
-outcomes*
+with continuous outcomes*
 
 [![](https://www.r-pkg.org/badges/version/OptGS?color=green)](https://cran.r-project.org/package=OptGS)
 [![](http://cranlogs.r-pkg.org/badges/grand-total/OptGS?color=green)](https://cran.r-project.org/package=OptGS)
 [![](http://cranlogs.r-pkg.org/badges/last-month/OptGS?color=green)](https://cran.r-project.org/package=OptGS)
 [![](https://img.shields.io/badge/doi-10.18637/jss.v066.i02-green.svg)](https://doi.org/10.18637/jss.v066.i02)
-[![](https://img.shields.io/badge/devel%20version-2.0.0-blue.svg)](https://github.com/mjg211/OptGS)
+[![](https://img.shields.io/badge/devel%20version-2.2.0-blue.svg)](https://github.com/mjg211/OptGS)
 [![](https://img.shields.io/github/languages/code-size/mjg211/OptGS.svg)](https://github.com/mjg211/OptGS)
 ![](https://img.shields.io/badge/contributions-welcome-blue.svg)
 
@@ -23,16 +22,14 @@ visualization of randomized two-arm group-sequential clinical trials
 with continuous outcome variables.
 
 Specifically, support is provided to perform a sample size calculation
-for each of the most popular relevant (non-optimal) designs. The unique
-focus, however, is on determining optimal and near-optimal designs,
-using the methods from [Wason *et al*
-(2012)](https://doi.org/10.1002/sim.4421) and [Wason
+for popular applicable (non-optimal) designs. The unique focus, however,
+is on determining optimal and near-optimal designs, using the methods
+from [Wason *et al* (2012)](https://doi.org/10.1002/sim.4421) and [Wason
 (2015)](https://doi.org/10.18637/jss.v066.i02) respectively.
 
-Additional functions then allow point estimates, p-values, and
-confidence intervals to be determined for possible results in these
-designs. Plotting functions also permit the informative depiction of
-several important quantities.
+Additional functions then allow point estimates to be computed and point
+estimators to be evaluated. Plotting functions also permit the
+informative depiction of several important quantities.
 
 ## Installation
 
@@ -79,8 +76,7 @@ opchar <- opchar(des, tau = seq(-des$delta, 2*des$delta,
 ```
 
 Finally, we can then plot the expected sample size and power curves for
-this design
-using:
+this design using:
 
 ``` r
 plot(opchar)
@@ -92,20 +88,20 @@ plot(opchar)
 
 Between v.1.1.1 (the latest released version on
 [CRAN](https://cran.r-project.org/web/packages/OptGS/index.html)) and
-v.2.0.0 (the current development version on
-[Github](https://github.com/mjg211/OptGS)), several major changes were
-made to **OptGS**:
+v.2.0.0 (which the current development version on
+[Github](https://github.com/mjg211/OptGS) has built upon), several major
+changes were made to **OptGS**:
 
-  - Dependence on C++ code was replaced with equivalent
+-   Dependence on C++ code was replaced with equivalent
     [R](https://www.r-project.org/) functionality for stability and ease
     of further development.
-  - Support for additional plots were added (e.g., median sample size
+-   Support for additional plots were added (e.g., median sample size
     curves).
-  - Functions to determine operating characteristics (`opchar()`),
-    perform inference on trial conclusion (`an()`), simulate
+-   Functions to determine operating characteristics (`opchar()`),
+    perform inference on trial conclusion (`est()`), simulate
     group-sequential trials (`sim()`), and build bespoke designs
     (`build()`) were added.
-  - Arguments in, and names of, previously present functions have been
+-   Arguments in, and names of, previously present functions have been
     modified (e.g., `optgs()` is replaced by `des_nearopt()`).
 
 Consequently, if all that you require is the functionality presented in
@@ -114,9 +110,9 @@ quicker to use v.1.1.1 from [CRAN](https://CRAN.R-project.org), which is
 a substantially simpler and also faster (in terms of execution time)
 package.
 
-However, as time progresses, the additional support provided by v.2.0.0
-and onwards should make them preferable with some small time investment
-to understand the purpose of the different functions.
+However, as time progresses, the additional support provided by v.2.0.0+
+should make them preferable with some small time investment to
+understand the purpose of the different functions.
 
 ## Support
 
@@ -134,9 +130,9 @@ an unexpected error for your inputs, please contact James Wason
 
 Wason JMS (2015) OptGS: An R package for finding near-optimal
 group-sequential designs. *Journal of Statistical Software* 66(2):1–13.
-DOI: [10.18637/jss.v066.i02](https://doi.org/10.18637/jss.v066.i02).
+<DOI:%5B10.18637/jss.v066.i02>\](<https://doi.org/10.18637/jss.v066.i02>).
 
 Wason JMS, Mander AP, Thompson SG (2012) Optimal multistage designs for
 randomised clinical trials with continuous outcomes. *Statistics in
-Medicine* 31(4):301–312. DOI:
-[10.1002/sim.4421](https://doi.org/10.1002/sim.4421).
+Medicine* 31(4):301–312.
+<DOI:%5B10.1002/sim.4421>\](<https://doi.org/10.1002/sim.4421>).
