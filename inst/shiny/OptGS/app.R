@@ -869,7 +869,7 @@ server <- function(input, output, session) {
     seq_J                   <- 1:input$design_J
     colnames(design$opchar) <-
       c("<i>&tau;</i>",
-        paste0("<i>", c("P", "ESS", "SDSS", "MSS"), "</i>(<i>&tau;</i>)"),
+        paste0("<i>", c("P", "ESS", "SDSS", "MeSS", "MoSS"), "</i>(<i>&tau;</i>)"),
         paste0("<i>E</i><sub>", seq_J, "</sub>(<i>&tau;</i>)"),
         paste0("<i>F</i><sub>", seq_J, "</sub>(<i>&tau;</i>)"),
         paste0("<i>S</i><sub>", seq_J, "</sub>(<i>&tau;</i>)"),
